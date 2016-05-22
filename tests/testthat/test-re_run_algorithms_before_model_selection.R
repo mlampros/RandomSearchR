@@ -41,28 +41,6 @@ nnet_dat_mlt$Y = nnet::class.ind(nnet_dat_mlt$Type)  # nnet exception
 nnet_dat_mlt$Type = NULL
 form_mlt_nnet <- as.formula(paste('Y ~', paste(names(X_mlt),collapse = '+')))
 
-
-#===========================================================================================
-
-# evaluation metrics
-
-mse = function(y_true, y_pred) {
-
-  out = mean((y_true - y_pred) ^ 2)
-
-  out
-}
-
-
-acc = function(y_true, preds) {
-
-  out = table(y_true, max.col(preds, ties.method = "random"))
-
-  acc = sum(diag(out))/sum(out)
-
-  acc
-}
-
 #=============================================================================================
 
 # sample some algorithms which will be used for testing the performance_measures function
