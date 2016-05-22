@@ -19,7 +19,7 @@ export(second_preds)
 export(subset_mods)
 import(gbm)
 import(h2o)
-import(kknn
+import(kknn)
 import(xgboost)
 import(MASS)
 import(RWeka)
