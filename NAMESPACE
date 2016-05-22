@@ -2,6 +2,7 @@
 
 S3method(predict,gbm)
 export(EXCEPTIONS_preds)
+export(mse)
 export(acc)
 export(class_folds)
 export(func_shuffle)
