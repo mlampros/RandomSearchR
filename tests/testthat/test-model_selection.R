@@ -333,10 +333,10 @@ testthat::test_that("if the evaluation metric is not in form of a string it retu
 })
 
 
-#testthat::test_that("if the evaluation metric is not in form of a string or NULL it returns an error", {
+testthat::test_that("if the evaluation metric is not in form of a string or NULL it returns an error", {
 
-#  testthat::expect_error(model_selection(new_lst_REGRESSION, on_Train = FALSE, regression = T, evaluation_metric = NULL, t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE))
-#})
+  testthat::expect_error(model_selection(new_lst_REGRESSION, on_Train = FALSE, regression = T, evaluation_metric = NULL, t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE))
+})
 
 
 testthat::test_that("if the number of algorithms is less than 2 it returns an error", {
@@ -349,8 +349,6 @@ testthat::test_that("if the number of algorithms is less than 2 it returns an er
 
 testthat::test_that("if the correlation test is NULL, if on_Train = F, if regression = T, it returns a NON-empty data.frame with 10 columns", {
 
-  mse = function(y_true, y_pred) { mean((y_true - y_pred) ^ 2) }
-
   modse = model_selection(new_lst_REGRESSION, on_Train = FALSE, regression = T, evaluation_metric = 'mse', t.test.conf.int = 0.95, cor_test = NULL, sort_decreasing = TRUE)
 
   testthat::expect_true(is.data.frame(modse) && ncol(modse) == 10 && sum(dim(modse)) == nrow(t(combn(1:length(new_lst_REGRESSION), 2))) + 10)
@@ -358,8 +356,6 @@ testthat::test_that("if the correlation test is NULL, if on_Train = F, if regres
 
 
 testthat::test_that("if the correlation test is NOT NULL, if on_Train = F, if regression = T, it returns a NON-empty data.frame with 10 columns", {
-
-  mse = function(y_true, y_pred) { mean((y_true - y_pred) ^ 2) }
 
   modse = model_selection(new_lst_REGRESSION, on_Train = FALSE, regression = T, evaluation_metric = 'mse', t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE)
 
@@ -369,8 +365,6 @@ testthat::test_that("if the correlation test is NOT NULL, if on_Train = F, if re
 
 testthat::test_that("if the correlation test is NULL, if on_Train = T, if regression = T, it returns a NON-empty data.frame with 10 columns", {
 
-  mse = function(y_true, y_pred) { mean((y_true - y_pred) ^ 2) }
-
   modse = model_selection(new_lst_REGRESSION, on_Train = T, regression = T, evaluation_metric = 'mse', t.test.conf.int = 0.95, cor_test = NULL, sort_decreasing = TRUE)
 
   testthat::expect_true(is.data.frame(modse) && ncol(modse) == 10 && sum(dim(modse)) == nrow(t(combn(1:length(new_lst_REGRESSION), 2))) + 10)
@@ -378,8 +372,6 @@ testthat::test_that("if the correlation test is NULL, if on_Train = T, if regres
 
 
 testthat::test_that("if the correlation test is NOT NULL, if on_Train = T, if regression = T, it returns a NON-empty data.frame with 13 columns", {
-
-  mse = function(y_true, y_pred) { mean((y_true - y_pred) ^ 2) }
 
   modse = model_selection(new_lst_REGRESSION, on_Train = T, regression = T, evaluation_metric = 'mse', t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE)
 
