@@ -41,6 +41,7 @@ nnet_dat_mlt$Y = nnet::class.ind(nnet_dat_mlt$Type)  # nnet exception
 nnet_dat_mlt$Type = NULL
 form_mlt_nnet <- as.formula(paste('Y ~', paste(names(X_mlt),collapse = '+')))
 
+
 #=============================================================================================
 
 # sample some algorithms which will be used for testing the performance_measures function
