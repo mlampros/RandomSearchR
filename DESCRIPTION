@@ -19,7 +19,8 @@ Imports:
     randomForest,
     kernlab,
     devtools,
-    utils
+    utils,
+    caret
 Date: 2016-03-16
 Author: Lampros Mouselimis
 Maintainer: Lampros Mouselimis <mouselimislampros@gmail.com>
