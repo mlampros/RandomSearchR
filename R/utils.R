@@ -133,6 +133,18 @@ regr_folds = function(folds, RESP, stratified = FALSE) {
 }
 
 
+#' evaluation metric for regression
+#' @keywords internal
+#' @export
+
+mse = function(y_true, y_pred) {
+
+  out = mean((y_true - y_pred) ^ 2)
+
+  out
+}
+
+
 #' evaluation metric for binary and multiclass classification
 #' @keywords internal
 #' @export
