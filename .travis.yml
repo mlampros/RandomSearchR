@@ -1,0 +1,30 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: r
+
+sudo: required
+cache: packages
+
+apt_packages:
+  - r-cran-rjava
+
+install:
+  - sudo apt-get install libgsl0-dev
+  - sudo apt-get install openjdk-7-*
+  - Rscript -e 'install.packages(c("devtools", "roxygen2","testthat", "doMC", "dplyr", "covr", "gbm", "h2o", "kknn", "xgboost", "MASS", "RWeka", "nnet", "e1071", "LiblineaR", "extraTrees", "glmnet", "stats", "elmNN", "randomForest",
+    "kernlab"))'
+
+r:
+  - oldrel
+  - release
+  - devel
+  
+after_success:
+  - Rscript -e 'covr::codecov(quiet = FALSE)'
+  
+warnings_are_errors: false
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
