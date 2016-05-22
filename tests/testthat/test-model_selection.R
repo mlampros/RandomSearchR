@@ -355,10 +355,10 @@ testthat::test_that("if the evaluation metric is not in form of a string it retu
 })
 
 
-testthat::test_that("if the evaluation metric is not in form of a string or NULL it returns an error", {
+#testthat::test_that("if the evaluation metric is not in form of a string or NULL it returns an error", {
 
-  testthat::expect_error(model_selection(new_lst_REGRESSION, on_Train = FALSE, regression = T, evaluation_metric = NULL, t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE))
-})
+#  testthat::expect_error(model_selection(new_lst_REGRESSION, on_Train = FALSE, regression = T, evaluation_metric = NULL, t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE))
+#})
 
 
 testthat::test_that("if the number of algorithms is less than 2 it returns an error", {
