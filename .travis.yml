@@ -12,7 +12,7 @@ install:
   - sudo apt-get install libgsl0-dev
   - sudo apt-get install openjdk-7-*
   - Rscript -e 'install.packages(c("devtools", "roxygen2","testthat", "doMC", "dplyr", "covr", "gbm", "h2o", "kknn", "xgboost", "MASS", "RWeka", "nnet", "e1071", "LiblineaR", "extraTrees", "glmnet", "stats", "elmNN", "randomForest",
-    "kernlab"))'
+    "kernlab", "caret"))'
 
 r:
   - oldrel
