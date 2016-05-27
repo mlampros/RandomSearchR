@@ -1,6 +1,5 @@
 #' secondary function used in performance measures   [ order of calculation is : first 'y_true' then 'preds' ]
 #' @keywords internal
-#' @export
 
 second_preds = function(sublist, eval_metric) {
 
