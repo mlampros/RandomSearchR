@@ -3,7 +3,6 @@
 #'
 #' this function shuffles the items of a vector
 #' @keywords internal
-#' @export
 
 func_shuffle = function(vec, times = 10) {
 
@@ -19,7 +18,6 @@ func_shuffle = function(vec, times = 10) {
 #'
 #' this function creates stratified folds in binary and multiclass classification
 #' @keywords internal
-#' @export
 #' @importFrom utils combn
 
 
@@ -79,7 +77,6 @@ class_folds = function(folds, RESP, shuffle = FALSE) {
 #'
 #' this function creates both stratified and non-stratified folds in regression
 #' @keywords internal
-#' @export
 
 
 regr_folds = function(folds, RESP, stratified = FALSE) {
@@ -161,7 +158,6 @@ acc = function(y_true, preds) {
 
 #' grid function  [ this function takes a grid of parameters, IF the grid includes a list and this list includes vectors then it takes a sample of 1 else if it includes a single value then it returns this value ]
 #' @keywords internal
-#' @export
 
 function_grid = function(grid_params = NULL) {
 
@@ -189,7 +185,6 @@ function_grid = function(grid_params = NULL) {
 
 #' secondary function for weka-algos (if re-run = TRUE)
 #' @keywords internal
-#' @export
 #' @importFrom RWeka Weka_control
 
 func_weka_rerun = function(bst_lst) {
@@ -218,7 +213,6 @@ func_weka_rerun = function(bst_lst) {
 
 #' function that will be used if re-run = TRUE
 #' @keywords internal
-#' @export
 
 optimal_grid = function(grid_params = NULL, iter = NULL) {
 
@@ -230,7 +224,6 @@ optimal_grid = function(grid_params = NULL, iter = NULL) {
 
 #' function to get the max. length of the parameter-grid
 #' @keywords internal
-#' @export
 
 length_grid = function(grid_params = NULL) {
 
@@ -243,7 +236,6 @@ length_grid = function(grid_params = NULL) {
 #' [  http://www.samuelbosch.com/2015/09/workaround-ntrees-is-missing-in-r.html,  with minor modifications ]
 #' work around for bug in gbm 2.1.1 -- PREDICTION-PROBABILITIES when predict(fit, data, type = 'response')
 #' @keywords internal
-#' @export
 #' @importFrom gbm gbm.perf
 #' @importFrom gbm predict.gbm
 
@@ -274,7 +266,6 @@ predict.gbm <- function (object, newdata, n.trees, type = "link", single.tree = 
 
 #' secondary function [ see previous one ]
 #' @keywords internal
-#' @export
 
 predict_gbm_workaround_probs <- function(object, newdata, n.trees, type = "link", single.tree = FALSE, ...) {        # don't change anything, otherwise rstudio crashes
 
@@ -302,7 +293,6 @@ predict_gbm_workaround_probs <- function(object, newdata, n.trees, type = "link"
 
 #' EXCEPTIONS in predictions [ REGRESSION and CLASSIFICATION ]
 #' @keywords internal
-#' @export
 
 
 EXCEPTIONS_preds = function(FIT, DATA, regression) {
