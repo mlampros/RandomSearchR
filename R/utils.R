@@ -369,20 +369,16 @@ EXCEPTIONS_preds = function(FIT, DATA, regression) {
 
 
 
-#' Repeated resampling methods
 
-#' Three different methods : 'bootstrap', 'train_test_split' and 'cross_validation'
+#' Repeated resampling methods
 #'
 #' @param y the response variable (continuous or factor)
 #' @param method one of 'bootstrap', 'train_test_split', 'cross_validation'
 #' @param REPEATS the number of times that the method should be repeated
 #' @param sample_rate train-data-sample-rate for 'bootstrap' and 'train_test_split'
 #' @param FOLDS the number of folds for the 'cross_validation' method
+#' @param seed an integer specifying the RNG
 #' @return a list of sublist(s)
-#' @param iter defaults to 1 and can vary when the resampling_methods function is used internally (as is the case in the random_search_resample function)
-#' @param REPEATS the number of times that the method should be repeated
-#' @param sample_rate train-data-sample-rate for 'bootstrap' and 'train_test_split'
-#' @param FOLDS the number of folds for the 'cross_validation' method
 #' @details
 #' This function is meant for splitting the data using three resampling methods, with the option of multiple repeats.
 #' @export
@@ -452,7 +448,7 @@ repeated_resampling = function(y, method, REPEATS = 1, sample_rate = NULL, FOLDS
 
 #' Resampling methods used in the RandomSearch file
 #'
-#' @keywords interna
+#' @keywords internal
 #' 
 
 resampling_methods = function(y, method, iter = 1, REPEATS = 1, sample_rate = NULL, FOLDS = NULL) {
