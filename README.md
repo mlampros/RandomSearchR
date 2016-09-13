@@ -1,6 +1,3 @@
-[![Travis-CI Build Status](https://travis-ci.org/mlampros/RandomSearchR.svg?branch=master)](https://travis-ci.org/mlampros/RandomSearchR)
-[![codecov.io](https://codecov.io/github/mlampros/RandomSearchR/coverage.svg?branch=master)](https://codecov.io/github/mlampros/RandomSearchR?branch=master)
-
 
 
 ### Random search in R
