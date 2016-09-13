@@ -271,30 +271,47 @@ testthat::test_that("the output of the predictions produced by the selected MULT
 
 
 
-# resampling_methods function
+
+# repeated_resampling function
 
 
-testthat::test_that("the resampling_methods function gives an error if the iter argument is NULL", {
+testthat::test_that("the repeated_resampling function gives an error if the method is invalid", {
 
   y = Boston$medv
 
-  testthat::expect_error(resampling_methods(y, 'bootstrap', NULL, REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
+  testthat::expect_error(repeated_resampling(y, NULL, REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
 })
 
 
-testthat::test_that("the resampling_methods function gives an error if the method is invalid", {
+testthat::test_that("the repeated_resampling function gives an error if the method is invalid", {
 
   y = Boston$medv
 
-  testthat::expect_error(resampling_methods(y, NULL, 1, REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
+  testthat::expect_error(repeated_resampling(y, 'invalid', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
 })
 
 
-testthat::test_that("the resampling_methods function gives an error if the method is invalid", {
+testthat::test_that("the repeated_resampling function gives an error if the iter argument is NULL", {
 
   y = Boston$medv
 
-  testthat::expect_error(resampling_methods(y, 'invalid', 1, REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
+  testthat::expect_error(repeated_resampling(y, 'bootstrap', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
+})
+
+
+testthat::test_that("the repeated_resampling function gives an error if the method is invalid", {
+
+  y = Boston$medv
+
+  testthat::expect_error(repeated_resampling(y, 1, REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
+})
+
+
+testthat::test_that("the repeated_resampling function gives an error if the method is invalid", {
+
+  y = Boston$medv
+
+  testthat::expect_error(repeated_resampling(y, 'invalid', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
 })
 
 
@@ -308,13 +325,13 @@ testthat::test_that("the bootstrap method works for a continuous response variab
   train_length = round(length(y) * samp_rate)
   # test_length = length(y) - train_length                 # in bootstraps the test-set lengths are not equal
 
-  res = resampling_methods(y, 'bootstrap', 1, REPEATS = repeats, sample_rate = samp_rate, FOLDS = NULL)
+  res = repeated_resampling(y, 'bootstrap', REPEATS = repeats, sample_rate = samp_rate, FOLDS = NULL)
 
   testthat::expect_true(is.list(res) && length(res) == repeats && mean(unlist(lapply(1:length(res), function(x) length(res$idx_train[[x]])))) == train_length)
 })
 
 
-testthat::test_that("the resampling_methods function works for a factor response variable", {
+testthat::test_that("the repeated_resampling function works for a factor response variable", {
 
   y = iris$Species
 
@@ -324,7 +341,7 @@ testthat::test_that("the resampling_methods function works for a factor response
   train_length = round(length(y) * samp_rate)
   # test_length = length(y) - train_length                 # in bootstraps the test-set lengths are not equal
 
-  res = resampling_methods(y, 'bootstrap', 1, REPEATS = repeats, sample_rate = samp_rate, FOLDS = NULL)
+  res = repeated_resampling(y, 'bootstrap', REPEATS = repeats, sample_rate = samp_rate, FOLDS = NULL)
 
   testthat::expect_true(is.list(res) && length(res) == repeats && mean(unlist(lapply(1:length(res), function(x) length(res$idx_train[[x]])))) == train_length)
 })
@@ -340,7 +357,7 @@ testthat::test_that("the train-test-split method works for a continuous response
   train_length = round(length(y) * samp_rate)
   test_length = length(y) - train_length
 
-  res = resampling_methods(y, 'train_test_split', 1, REPEATS = repeats, sample_rate = samp_rate, FOLDS = NULL)
+  res = repeated_resampling(y, 'train_test_split', REPEATS = repeats, sample_rate = samp_rate, FOLDS = NULL)
 
   testthat::expect_true(is.list(res) && length(res) == repeats && mean(unlist(lapply(1:length(res), function(x) length(res$idx_train[[x]])))) == train_length
 
@@ -358,7 +375,7 @@ testthat::test_that("the train-test-split method works for a factor response var
   train_length = round(length(y) * samp_rate)
   test_length = length(y) - train_length
 
-  res = resampling_methods(y, 'train_test_split', 1, REPEATS = repeats, sample_rate = samp_rate, FOLDS = NULL)
+  res = repeated_resampling(y, 'train_test_split', REPEATS = repeats, sample_rate = samp_rate, FOLDS = NULL)
 
   testthat::expect_true(is.list(res) && length(res) == repeats && mean(unlist(lapply(1:length(res), function(x) length(res$idx_train[[x]])))) == train_length
 
@@ -373,7 +390,7 @@ testthat::test_that("the cross_validation method works for a continuous response
   folds = 3
   repeats = 2
 
-  res = resampling_methods(y, 'cross_validation', 1, REPEATS = repeats, sample_rate = NULL, FOLDS = folds)
+  res = repeated_resampling(y, 'cross_validation', REPEATS = repeats, sample_rate = NULL, FOLDS = folds)
 
   tmp = unlist(lapply(1:length(res), function(x) length(res$idx_train[[x]]) + length(res$idx_test[[x]])))
 
@@ -388,7 +405,8 @@ testthat::test_that("the cross_validation method works for a factor response var
   folds = 3
   repeats = 2
 
-  res = resampling_methods(y, 'cross_validation', 1, REPEATS = repeats, sample_rate = NULL, FOLDS = folds)
+
+  res = repeated_resampling(y, 'cross_validation', REPEATS = repeats, sample_rate = NULL, FOLDS = folds)
 
   tmp = unlist(lapply(1:length(res), function(x) length(res$idx_train[[x]]) + length(res$idx_test[[x]])))
 
