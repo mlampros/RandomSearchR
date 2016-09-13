@@ -17,12 +17,14 @@ repeated_resampling(y, method, REPEATS = 1, sample_rate = NULL,
 \item{sample_rate}{train-data-sample-rate for 'bootstrap' and 'train_test_split'}
 
 \item{FOLDS}{the number of folds for the 'cross_validation' method}
+
+\item{seed}{an integer specifying the RNG}
 }
 \value{
 a list of sublist(s)
 }
 \description{
-Three different methods : 'bootstrap', 'train_test_split' and 'cross_validation'
+Repeated resampling methods
 }
 \details{
 This function is meant for splitting the data using three resampling methods, with the option of multiple repeats.

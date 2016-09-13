@@ -271,6 +271,7 @@ testthat::test_that("the output of the predictions produced by the selected MULT
 
 
 
+
 # repeated_resampling function
 
 
@@ -279,6 +280,30 @@ testthat::test_that("the repeated_resampling function gives an error if the meth
   y = Boston$medv
 
   testthat::expect_error(repeated_resampling(y, NULL, REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
+})
+
+
+testthat::test_that("the repeated_resampling function gives an error if the method is invalid", {
+
+  y = Boston$medv
+
+  testthat::expect_error(repeated_resampling(y, 'invalid', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
+})
+
+
+testthat::test_that("the repeated_resampling function gives an error if the iter argument is NULL", {
+
+  y = Boston$medv
+
+  testthat::expect_error(repeated_resampling(y, 'bootstrap', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
+})
+
+
+testthat::test_that("the repeated_resampling function gives an error if the method is invalid", {
+
+  y = Boston$medv
+
+  testthat::expect_error(repeated_resampling(y, 1, REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
 })
 
 
@@ -379,6 +404,7 @@ testthat::test_that("the cross_validation method works for a factor response var
 
   folds = 3
   repeats = 2
+
 
   res = repeated_resampling(y, 'cross_validation', REPEATS = repeats, sample_rate = NULL, FOLDS = folds)
 
