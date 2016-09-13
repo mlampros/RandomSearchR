@@ -1,5 +1,6 @@
 
 
+
 ### Random search in R
 
 The functions in the package can be used to,
@@ -11,3 +12,5 @@ The functions in the package can be used to,
 <br>
 
 UPDATED : 23-05-2016 [ I added tests and code-coverage ]
+
+UPDATED : 13-09-2016 [ I replaced the *resampling_methods* function with the *repeated_resampling* function ]
