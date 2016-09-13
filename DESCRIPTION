@@ -1,7 +1,7 @@
 Package: RandomSearchR
 Type: Package
 Title: Random Search in R
-Version: 0.1
+Version: 0.2
 Imports:
     gbm,
     h2o,
