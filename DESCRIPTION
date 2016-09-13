@@ -1,0 +1,35 @@
+Package: RandomSearchR
+Type: Package
+Title: Random Search in R
+Version: 0.2
+Imports:
+    gbm,
+    h2o,
+    kknn,
+    xgboost,
+    MASS,
+    RWeka,
+    nnet,
+    e1071,
+    LiblineaR,
+    extraTrees,
+    glmnet,
+    stats,
+    elmNN,
+    randomForest,
+    kernlab,
+    devtools,
+    utils,
+    caret,
+    adabag
+Date: 2016-03-16
+Author: Lampros Mouselimis
+Maintainer: Lampros Mouselimis <mouselimislampros@gmail.com>
+Description: The main function random_search_resample performs random search
+    resampling using resampling techniques.
+License: GPL-3
+LazyData: TRUE
+Suggests:
+    testthat,
+    covr
+RoxygenNote: 5.0.1
