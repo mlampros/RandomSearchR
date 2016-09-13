@@ -369,12 +369,16 @@ EXCEPTIONS_preds = function(FIT, DATA, regression) {
 
 
 
-#' Resampling methods
-#'
+#' Repeated resampling methods
+
 #' Three different methods : 'bootstrap', 'train_test_split' and 'cross_validation'
 #'
 #' @param y the response variable (continuous or factor)
 #' @param method one of 'bootstrap', 'train_test_split', 'cross_validation'
+#' @param REPEATS the number of times that the method should be repeated
+#' @param sample_rate train-data-sample-rate for 'bootstrap' and 'train_test_split'
+#' @param FOLDS the number of folds for the 'cross_validation' method
+#' @return a list of sublist(s)
 #' @param iter defaults to 1 and can vary when the resampling_methods function is used internally (as is the case in the random_search_resample function)
 #' @param REPEATS the number of times that the method should be repeated
 #' @param sample_rate train-data-sample-rate for 'bootstrap' and 'train_test_split'
@@ -386,9 +390,70 @@ EXCEPTIONS_preds = function(FIT, DATA, regression) {
 #'
 #' # data(Boston, package = 'MASS')
 #' # y = Boston$medv
-#' # res = resampling_methods(y, 'bootstrap', 3, REPEATS = 2, sample_rate = 0.75, FOLDS = NULL)
+#' # res = repeated_resampling(y, 'bootstrap', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL)
 #'
 
+
+repeated_resampling = function(y, method, REPEATS = 1, sample_rate = NULL, FOLDS = NULL, seed = 1) {
+  
+  if (!method %in% c('bootstrap', 'train_test_split', 'cross_validation')) stop('invalid method. Choose one of bootstrap, train_test_split, cross_validation')
+  if (method %in% c('bootstrap', 'train_test_split') && is.null(sample_rate)) stop("if method is 'bootstrap' or 'train_test_split' then the sample_rate parameter shouldn't be NULL and the opposite")
+  if (method == 'cross_validation' && (is.null(FOLDS) || FOLDS < 2)) stop("if method is 'cross_validation' then the FOLDS parameter should be non-NULL and greater than 1")
+  if (REPEATS < 1) stop("the number of REPEATS should be greater than 0")
+  
+  method = match.arg(method, c('bootstrap', 'train_test_split', 'cross_validation'))
+  
+  switch(method,
+         
+         bootstrap = {
+           
+           idx_train_lst = idx_test_lst = list()
+           
+           for (Repeat in 1:REPEATS) {
+             
+             set.seed(Repeat * seed)
+             tmp_train_idx = sample(1:length(y), size = round(length(y) * sample_rate), replace = TRUE)      # in case of bootstrap the test sublists do not have the same number of observations as the sampling is with replacement
+             idx_train_lst[[Repeat]] = tmp_train_idx
+             idx_test_lst[[Repeat]] = setdiff(1:length(y), tmp_train_idx) }
+         },
+         
+         train_test_split = {
+           
+           idx_train_lst = idx_test_lst = list()
+           
+           for (Repeat in 1:REPEATS) {
+             
+             set.seed(Repeat * seed)
+             tmp_train_idx = sample(1:length(y), size = round(length(y) * sample_rate), replace = FALSE)
+             idx_train_lst[[Repeat]] = tmp_train_idx
+             idx_test_lst[[Repeat]] = setdiff(1:length(y), tmp_train_idx) }
+         },
+         
+         cross_validation = {
+           
+           if (is.factor(y)) {
+             
+             set.seed(seed)
+             idx_test_lst = class_folds(FOLDS, y)
+             idx_train_lst = lapply(1:length(idx_test_lst), function(x) as.vector(unlist(idx_test_lst[-x])))}
+           
+           else {
+             
+             set.seed(seed)
+             idx_test_lst = regr_folds(FOLDS, y)
+             idx_train_lst = lapply(1:length(idx_test_lst), function(x) as.vector(unlist(idx_test_lst[-x])))}
+         }
+  )
+  
+  return(list(idx_train = idx_train_lst, idx_test = idx_test_lst))
+}
+
+
+
+#' Resampling methods used in the RandomSearch file
+#'
+#' @keywords interna
+#' 
 
 resampling_methods = function(y, method, iter = 1, REPEATS = 1, sample_rate = NULL, FOLDS = NULL) {
 
