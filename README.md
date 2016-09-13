@@ -1,5 +1,6 @@
 
 
+
 ### Random search in R
 
 The functions in the package can be used to,
