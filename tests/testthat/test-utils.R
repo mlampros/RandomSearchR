@@ -291,14 +291,6 @@ testthat::test_that("the repeated_resampling function gives an error if the meth
 })
 
 
-testthat::test_that("the repeated_resampling function gives an error if the iter argument is NULL", {
-
-  y = Boston$medv
-
-  testthat::expect_error(repeated_resampling(y, 'bootstrap', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL))
-})
-
-
 testthat::test_that("the repeated_resampling function gives an error if the method is invalid", {
 
   y = Boston$medv
