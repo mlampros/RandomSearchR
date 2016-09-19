@@ -384,7 +384,11 @@ testthat::test_that("the cross_validation method works for a continuous response
 
   res = repeated_resampling(y, 'cross_validation', REPEATS = repeats, sample_rate = NULL, FOLDS = folds)
 
-  tmp = unlist(lapply(1:length(res), function(x) length(res$idx_train[[x]]) + length(res$idx_test[[x]])))
+  tmp_train = unlist(res$idx_train, recursive = F)
+  
+  tmp_test = unlist(res$idx_test, recursive = F)
+  
+  tmp = unlist(lapply(1:length(tmp_train), function(x) (length(tmp_train[[x]]) + length(tmp_test[[x]]))))
 
   testthat::expect_true(is.list(res) && length(res) == repeats && sum(sapply(tmp, function(x) identical(length(y), x))) == length(tmp))
 })
@@ -397,14 +401,17 @@ testthat::test_that("the cross_validation method works for a factor response var
   folds = 3
   repeats = 2
 
-
   res = repeated_resampling(y, 'cross_validation', REPEATS = repeats, sample_rate = NULL, FOLDS = folds)
 
-  tmp = unlist(lapply(1:length(res), function(x) length(res$idx_train[[x]]) + length(res$idx_test[[x]])))
+  tmp_train = unlist(res$idx_train, recursive = F)
+  
+  tmp_test = unlist(res$idx_test, recursive = F)
+  
+  tmp = unlist(lapply(1:length(tmp_train), function(x) (length(tmp_train[[x]]) + length(tmp_test[[x]]))))
+  
 
   testthat::expect_true(is.list(res) && length(res) == repeats && sum(sapply(tmp, function(x) identical(length(y), x))) == length(tmp))
 })
-
 
 
 # shuffle data
