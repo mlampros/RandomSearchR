@@ -428,7 +428,7 @@ repeated_resampling = function (y, method, REPEATS = 1, sample_rate = NULL, FOLD
       if (is.factor(y)) {
         set.seed(Repeat * seed)
         tmp_folds_test = class_folds(FOLDS, y)
-        idx_train_lst[[Repeat]] = lapply(1:length(tmp_folds), function(x) as.vector(unlist(tmp_folds[-x])))
+        idx_train_lst[[Repeat]] = lapply(1:length(tmp_folds_test), function(x) as.vector(unlist(tmp_folds_test[-x])))
         
         idx_test_lst[[Repeat]] = tmp_folds_test} 
       
