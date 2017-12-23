@@ -26,3 +26,5 @@ After downloading the package use ? to read info about each function (i.e. ?rand
 UPDATED : 23-05-2016 [ I added tests and code-coverage ]
 
 UPDATED : 13-09-2016 [ I replaced the *resampling_methods* function with the *repeated_resampling* function ]
+
+UPDATED : 23-12-2017 [ I modified the xgboost-predict function due to an error ]
