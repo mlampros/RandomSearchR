@@ -12,6 +12,7 @@
 #' @param Args a list with further arguments of the function
 #' @param regression a boolean (TRUE, FALSE)
 #' @param re_run_params a boolean (TRUE, FALSE)
+#' @param UNLABELED_TEST_DATA either NULL or a data.frame ( matrix ) with the same number of columns as the initial train data
 #' @return a list of lists
 #' @author Lampros Mouselimis
 #' @details
@@ -87,7 +88,7 @@
 
 
 
-random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL, ALGORITHM = NULL, grid_params = NULL, DATA = NULL, Args = NULL, regression = FALSE, re_run_params = FALSE, ...) {
+random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL, ALGORITHM = NULL, grid_params = NULL, DATA = NULL, Args = NULL, regression = FALSE, re_run_params = FALSE, UNLABELED_TEST_DATA = NULL, ...) {
 
   if (any(c('h2o.x', 'h2o.y') %in% names(DATA))) {
 
@@ -118,7 +119,7 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
     TMP_lst_names = unlist(lapply(1:length(grid_params), function(x) if (is.list(grid_params[[x]])) names(grid_params[[x]]) else names(grid_params)[[x]]))
   }
 
-  GRID_lst = Grid_params = list()
+  GRID_lst = Grid_params = GRID_TEST = list()
 
   cat('\n') ; cat('grid random search starts ..', '\n')
 
@@ -170,9 +171,25 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
       tmp_X = DATA[['watchlist']][['data']]
     }
 
+    if (!is.null(UNLABELED_TEST_DATA)) {
+
+      if (ncol(tmp_X) != ncol(UNLABELED_TEST_DATA)) {
+
+        stop("the number of the columns of the 'UNLABELED_TEST_DATA' parameter should be equal to the number of columns of the input train data", call. = F)
+      }
+    }
+
     if (any(c('h2o.x', 'h2o.y') %in% names(DATA))) {
 
       tmp_h2o_data = cbind(DATA[['h2o.y']], DATA[['h2o.x']])
+
+      if (!is.null(UNLABELED_TEST_DATA)) {
+
+        if (ncol(DATA[['h2o.x']]) != ncol(UNLABELED_TEST_DATA)) {
+
+          stop("the number of the columns of the 'UNLABELED_TEST_DATA' parameter should be equal to the number of columns of the input train data", call. = F)
+        }
+      }
     }
 
     # END of 1st exception for various algorithms
@@ -220,6 +237,8 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
                                         sample_rate = resampling_method$sample_rate, FOLDS = resampling_method$folds)
     out_f = list()
 
+    out_TEST_PREDS = list()
+
     for (Repeat in 1:length(out_resampling$idx_train)) {
 
       idx_train = out_resampling$idx_train[[Repeat]]
@@ -249,12 +268,23 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
         if (regression == TRUE) {
 
           pred_tr = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression))
-          pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))}
+          pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))
+
+          if (!is.null(UNLABELED_TEST_DATA)) {
+
+            out_TEST_PREDS[[Repeat]] = as.vector(EXCEPTIONS_preds(tmp_fit, UNLABELED_TEST_DATA, regression))
+          }
+        }
 
         else {
 
           pred_tr = EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression)
           pred_te = EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression)
+
+          if (!is.null(UNLABELED_TEST_DATA)) {
+
+            out_TEST_PREDS[[Repeat]] = EXCEPTIONS_preds(tmp_fit, UNLABELED_TEST_DATA, regression)
+          }
         }
 
         out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])
@@ -285,12 +315,23 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
         if (regression == TRUE) {
 
           pred_tr = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression))
-          pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))}
+          pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))
+
+          if (!is.null(UNLABELED_TEST_DATA)) {
+
+            out_TEST_PREDS[[Repeat]] = as.vector(EXCEPTIONS_preds(tmp_fit, UNLABELED_TEST_DATA, regression))
+          }
+        }
 
         else {
 
           pred_tr = EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression)
           pred_te = EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression)
+
+          if (!is.null(UNLABELED_TEST_DATA)) {
+
+            out_TEST_PREDS[[Repeat]] = EXCEPTIONS_preds(tmp_fit, UNLABELED_TEST_DATA, regression)
+          }
         }
 
         out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])
@@ -316,12 +357,23 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
         if (regression == TRUE) {
 
           pred_tr = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression))
-          pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))}
+          pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))
+
+          if (!is.null(UNLABELED_TEST_DATA)) {
+
+            out_TEST_PREDS[[Repeat]] = as.vector(EXCEPTIONS_preds(tmp_fit, UNLABELED_TEST_DATA, regression))
+          }
+        }
 
         else {
 
           pred_tr = EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression)
           pred_te = EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression)
+
+          if (!is.null(UNLABELED_TEST_DATA)) {
+
+            out_TEST_PREDS[[Repeat]] = EXCEPTIONS_preds(tmp_fit, UNLABELED_TEST_DATA, regression)
+          }
         }
 
         out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])
@@ -348,13 +400,31 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
         tmp_fit_te = do.call(ALGORITHM$algorithm, tmp_args)
 
+        if (!is.null(UNLABELED_TEST_DATA)) {
+
+          tmp_args[['test']] = UNLABELED_TEST_DATA
+
+          tmp_fit_TEST = do.call(ALGORITHM$algorithm, tmp_args)
+        }
+
         if (regression == TRUE) {
 
-          tmp_out = list(pred_tr = tmp_fit_tr$fitted.values, pred_te = tmp_fit_te$fitted.values, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])}
+          tmp_out = list(pred_tr = tmp_fit_tr$fitted.values, pred_te = tmp_fit_te$fitted.values, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])
+
+          if (!is.null(UNLABELED_TEST_DATA)) {
+
+            out_TEST_PREDS[[Repeat]] = tmp_fit_TEST$fitted.values
+          }
+        }
 
         else {
 
           tmp_out = list(pred_tr = tmp_fit_tr$prob, pred_te = tmp_fit_te$prob, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])
+
+          if (!is.null(UNLABELED_TEST_DATA)) {
+
+            out_TEST_PREDS[[Repeat]] = tmp_fit_TEST$prob
+          }
         }
 
         out_f[[Repeat]] = tmp_out
@@ -381,6 +451,13 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
         tmp_fit_te = do.call(ALGORITHM$algorithm, tmp_args)
 
+        if (!is.null(UNLABELED_TEST_DATA)) {
+
+          tmp_args[['TEST_data']] = UNLABELED_TEST_DATA
+
+          out_TEST_PREDS[[Repeat]] = do.call(ALGORITHM$algorithm, tmp_args)
+        }
+
         out_f[[Repeat]] = list(pred_tr = tmp_fit_tr, pred_te = tmp_fit_te, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])
       }
 
@@ -392,6 +469,11 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
         h2o_train = as.h2o(tmp_h2o_data[idx_train, ], destination_frame = 'h2o_train')
         h2o_test = as.h2o(tmp_h2o_data[idx_test, ], destination_frame = 'h2o_test')
+
+        if (!is.null(UNLABELED_TEST_DATA)) {
+
+          h2o_TEST = as.h2o(UNLABELED_TEST_DATA, destination_frame = 'h2o_TEST')
+        }
 
         tmp_args[['training_frame']] = h2o_train
 
@@ -409,12 +491,24 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
         if (regression == TRUE && as.vector(class(tmp_fit_h2o)) == "H2ORegressionModel") {
 
           pred_tr = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_train))[, 1]
-          pred_te = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_test))[, 1]}
+          pred_te = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_test))[, 1]
+
+          if (!is.null(UNLABELED_TEST_DATA)) {
+
+            out_TEST_PREDS[[Repeat]] = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_TEST))[, 1]
+          }
+        }
 
         else if (regression == FALSE && (as.vector(class(tmp_fit_h2o)) %in% c("H2OBinomialModel", "H2OMultinomialModel"))) {
 
           pred_tr = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_train))[, -1]
-          pred_te = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_test))[, -1]}
+          pred_te = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_test))[, -1]
+
+          if (!is.null(UNLABELED_TEST_DATA)) {
+
+            out_TEST_PREDS[[Repeat]] = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_TEST))[, -1]
+          }
+        }
 
         else {
 
@@ -449,12 +543,24 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
               pred_tr = xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$train, ntreelimit = tmp_fit$best_iteration)
               pred_te = xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$test, ntreelimit = tmp_fit$best_iteration)
+
+              if (!is.null(UNLABELED_TEST_DATA)) {
+
+                out_TEST_PREDS[[Repeat]] = xgboost:::predict.xgb.Booster(tmp_fit, as.matrix(UNLABELED_TEST_DATA), ntreelimit = tmp_fit$best_iteration)
+              }
+
               out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])}
 
             else {
 
               pred_tr = as.data.frame(matrix(xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$train, ntreelimit = tmp_fit$best_iteration), nrow = nrow(tmp_X[idx_train, ]), ncol = length(unique(getinfo(tmp_args$data, 'label'))), byrow = T))
               pred_te = as.data.frame(matrix(xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$test, ntreelimit = tmp_fit$best_iteration), nrow = nrow(tmp_X[idx_test, ]), ncol = length(unique(getinfo(tmp_args$data, 'label'))), byrow = T))
+
+              if (!is.null(UNLABELED_TEST_DATA)) {
+
+                out_TEST_PREDS[[Repeat]] = as.data.frame(matrix(xgboost:::predict.xgb.Booster(tmp_fit, as.matrix(UNLABELED_TEST_DATA), ntreelimit = tmp_fit$best_iteration), nrow = nrow(UNLABELED_TEST_DATA), ncol = length(unique(getinfo(tmp_args$data, 'label'))), byrow = T))
+              }
+
               out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = as.factor(tmp_y[idx_train] + 1), y_te = as.factor(tmp_y[idx_test] + 1))      # I subtracted 1 from tmp_y AND I add here 1 for the performance measures [ convert to factor in classification ]
                         }
       }
@@ -465,6 +571,8 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
     GRID_lst[[iter]] = out_f
 
+    GRID_TEST[[iter]] = out_TEST_PREDS
+
     setTxtProgressBar(pb, iter)
   }
   close(pb) ; cat('\n')
@@ -473,6 +581,13 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
   colnames(tmp_PARAMS) = TMP_lst_names
 
-  return(list(PREDS = GRID_lst, PARAMS = tmp_PARAMS))
+  bef_out_lst = list(PREDS = GRID_lst, PARAMS = tmp_PARAMS)
+
+  if (!is.null(UNLABELED_TEST_DATA)) {
+
+    bef_out_lst[['preds_unlabeled_test']] = GRID_TEST
+  }
+
+  return(bef_out_lst)
 }
 
