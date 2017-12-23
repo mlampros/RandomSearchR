@@ -447,14 +447,14 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
             if (regression == TRUE) {
 
-              pred_tr = predict(tmp_fit, tmp_args$watchlist$train, ntreelimit = tmp_fit$bestInd)
-              pred_te = predict(tmp_fit, tmp_args$watchlist$test, ntreelimit = tmp_fit$bestInd)
+              pred_tr = xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$train, ntreelimit = tmp_fit$best_iteration)
+              pred_te = xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$test, ntreelimit = tmp_fit$best_iteration)
               out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])}
 
             else {
 
-              pred_tr = as.data.frame(matrix(predict(tmp_fit, tmp_args$watchlist$train, ntreelimit = tmp_fit$bestInd), nrow = nrow(tmp_X[idx_train, ]), ncol = length(unique(getinfo(tmp_args$data, 'label'))), byrow = T))
-              pred_te = as.data.frame(matrix(predict(tmp_fit, tmp_args$watchlist$test, ntreelimit = tmp_fit$bestInd), nrow = nrow(tmp_X[idx_test, ]), ncol = length(unique(getinfo(tmp_args$data, 'label'))), byrow = T))
+              pred_tr = as.data.frame(matrix(xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$train, ntreelimit = tmp_fit$best_iteration), nrow = nrow(tmp_X[idx_train, ]), ncol = length(unique(getinfo(tmp_args$data, 'label'))), byrow = T))
+              pred_te = as.data.frame(matrix(xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$test, ntreelimit = tmp_fit$best_iteration), nrow = nrow(tmp_X[idx_test, ]), ncol = length(unique(getinfo(tmp_args$data, 'label'))), byrow = T))
               out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = as.factor(tmp_y[idx_train] + 1), y_te = as.factor(tmp_y[idx_test] + 1))      # I subtracted 1 from tmp_y AND I add here 1 for the performance measures [ convert to factor in classification ]
                         }
       }
