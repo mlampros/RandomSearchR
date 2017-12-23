@@ -10,7 +10,7 @@ The functions in the package can be used to,
 * compare performance of algorithms using summary statistics. 
 
 <br>
-To install the package from Github use the *install_github* function of the devtools package,
+To install the package from Github use the 'install_github' function of the devtools package,
 <br><br>
 
 ```R
