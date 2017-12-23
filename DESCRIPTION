@@ -1,7 +1,7 @@
 Package: RandomSearchR
 Type: Package
 Title: Random Search in R
-Version: 0.2
+Version: 0.3
 Imports:
     gbm,
     h2o,
@@ -22,7 +22,7 @@ Imports:
     utils,
     caret,
     adabag
-Date: 2016-03-16
+Date: 2017-12-23
 Author: Lampros Mouselimis
 Maintainer: Lampros Mouselimis <mouselimislampros@gmail.com>
 Description: The main function random_search_resample performs random search
