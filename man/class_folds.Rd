@@ -10,4 +10,3 @@ class_folds(folds, RESP, shuffle = FALSE)
 this function creates stratified folds in binary and multiclass classification
 }
 \keyword{internal}
-

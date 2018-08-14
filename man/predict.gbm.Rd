@@ -13,4 +13,3 @@ work around for bug in gbm 2.1.1 -- PREDICTION-PROBABILITIES when predict(fit, d
 work around for bug in gbm 2.1.1 -- PREDICTION-PROBABILITIES when predict(fit, data, type = 'response')
 }
 \keyword{internal}
-

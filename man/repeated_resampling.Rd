@@ -36,4 +36,3 @@ This function is meant for splitting the data using three resampling methods, wi
 # res = repeated_resampling(y, 'bootstrap', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL)
 
 }
-

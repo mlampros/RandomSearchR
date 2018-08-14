@@ -42,6 +42,11 @@ nnet_dat_mlt$Type = NULL
 form_mlt_nnet <- as.formula(paste('Y ~', paste(names(X_mlt),collapse = '+')))
 
 
+# data for elmNNRcpp
+yy = matrix(y1, nrow = length(y1), ncol = 1)
+yy_class = elmNNRcpp::onehot_encode(y1_class - 1)
+yyy_class = elmNNRcpp::onehot_encode(y1_mlt - 1)
+
 #====================================================================================================================================================================
 
 # function to validate the parameters of each algorithm
@@ -272,21 +277,24 @@ testthat::test_that("if the resampling_method$method is either 'bootstrap' or 't
 
 #=================================================================================================================================================================================
 
-# elmNN  [ regression only ]
+# Regression elmNNRcpp
+#---------------------
 
-testthat::test_that("results for elmNN using the func_validate function are correct, REGRESSION", {
+testthat::test_that("results for elmNNRcpp using the func_validate function are correct, REGRESSION", {
 
-  grid = list(nhid = 5:50, actfun = c('sig', 'sin', 'purelin', 'radbas', 'poslin'))
+  grid = list(nhid = seq(100, 200, 10), actfun = c('sig', 'purelin', 'relu'), init_weights = c('normal_gaussian', 'uniform_positive', 'uniform_negative' ),
 
-  algs = random_search_resample(y1, tune_iters = 3,
+              bias = c(T,F), leaky_relu_alpha = c(0.0, 0.01, 0.05, 0.1) )
+
+  algs = random_search_resample(yy, tune_iters = 3,
 
                                 resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 3),
 
-                                ALGORITHM = list(package = require(elmNN), algorithm = elmtrain),
+                                ALGORITHM = list(package = require(elmNNRcpp), algorithm = elm_train),
 
                                 grid_params = grid,
 
-                                DATA = list(y = y1, x = X),
+                                DATA = list(y = yy, x = as.matrix(X)),
 
                                 Args = NULL,
 
@@ -295,6 +303,72 @@ testthat::test_that("results for elmNN using the func_validate function are corr
   valid_all = unlist(func_validate(algs, ALL_DATA, 3, 3, 'cross_validation', each_resampling_proportion = 2/3, names(grid), T))
 
   testthat::expect_true(sum(valid_all) == 6)
+})
+
+
+
+# binary Classification elmNNRcpp
+#--------------------------------
+
+testthat::test_that("results for elmNNRcpp using the func_validate function are correct, BINARY CLASSIFICATION", {
+
+  grid = list(nhid = seq(100, 200, 100), actfun = c('sig', 'sin', 'radbas', 'hardlim', 'hardlims', 'satlins', 'tansig', 'tribas', 'relu', 'purelin' ),
+
+              init_weights = c('normal_gaussian', 'uniform_positive', 'uniform_negative' ),
+
+              bias = c(T,F), leaky_relu_alpha = c(0.0, 0.01, 0.05, 0.1) )
+
+
+  algs = random_search_resample(as.factor(y1_class), tune_iters = 3,
+
+                                resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 3),
+
+                                ALGORITHM = list(package = require(elmNNRcpp), algorithm = elm_train),
+
+                                grid_params = grid,
+
+                                DATA = list(y = yy_class, x = as.matrix(scale(X_class))),
+
+                                Args = NULL,
+
+                                regression = F, re_run_params = FALSE)
+
+  valid_all = unlist(func_validate(algs, ALL_DATA, 3, 3, 'cross_validation', each_resampling_proportion = 2/3, names(grid), T))
+
+  testthat::expect_true(sum(valid_all) == 4)
+})
+
+
+
+# binary Classification elmNNRcpp
+#--------------------------------
+
+testthat::test_that("results for elmNNRcpp using the func_validate function are correct, MULTICLASS CLASSIFICATION", {
+
+  grid = list(nhid = seq(100, 200, 10), actfun = c('sig', 'sin', 'radbas', 'hardlim', 'hardlims', 'satlins', 'tansig', 'tribas', 'relu', 'purelin' ),
+
+              init_weights = c('normal_gaussian', 'uniform_positive', 'uniform_negative' ),
+
+              bias = c(T,F), leaky_relu_alpha = c(0.0, 0.01, 0.05, 0.1) )
+
+
+  algs = random_search_resample(as.factor(y1_mlt), tune_iters = 3,
+
+                                resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 3),
+
+                                ALGORITHM = list(package = require(elmNNRcpp), algorithm = elm_train),
+
+                                grid_params = grid,
+
+                                DATA = list(y = yyy_class, x = as.matrix(scale(X_mlt))),
+
+                                Args = NULL,
+
+                                regression = F, re_run_params = FALSE)
+
+  valid_all = unlist(func_validate(algs, ALL_DATA, 3, 3, 'cross_validation', each_resampling_proportion = 2/3, names(grid), T))
+
+  testthat::expect_true(sum(valid_all) == 4)
 })
 
 

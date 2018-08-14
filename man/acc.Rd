@@ -10,4 +10,3 @@ acc(y_true, preds)
 evaluation metric for binary and multiclass classification
 }
 \keyword{internal}
-

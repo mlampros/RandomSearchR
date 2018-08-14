@@ -6,7 +6,8 @@
 \usage{
 random_search_resample(y, tune_iters = NULL, resampling_method = NULL,
   ALGORITHM = NULL, grid_params = NULL, DATA = NULL, Args = NULL,
-  regression = FALSE, re_run_params = FALSE, ...)
+  regression = FALSE, re_run_params = FALSE, UNLABELED_TEST_DATA = NULL,
+  ...)
 }
 \arguments{
 \item{y}{a numeric vector}
@@ -26,6 +27,8 @@ random_search_resample(y, tune_iters = NULL, resampling_method = NULL,
 \item{regression}{a boolean (TRUE, FALSE)}
 
 \item{re_run_params}{a boolean (TRUE, FALSE)}
+
+\item{UNLABELED_TEST_DATA}{either NULL or a data.frame ( matrix ) with the same number of columns as the initial train data}
 }
 \value{
 a list of lists
@@ -97,4 +100,3 @@ This function takes a number of arguments (including a grid of parameters) of an
 \author{
 Lampros Mouselimis
 }
-

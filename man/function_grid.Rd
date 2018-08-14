@@ -10,4 +10,3 @@ function_grid(grid_params = NULL)
 grid function  [ this function takes a grid of parameters, IF the grid includes a list and this list includes vectors then it takes a sample of 1 else if it includes a single value then it returns this value ]
 }
 \keyword{internal}
-

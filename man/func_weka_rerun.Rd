@@ -10,4 +10,3 @@ func_weka_rerun(bst_lst)
 secondary function for weka-algos (if re-run = TRUE)
 }
 \keyword{internal}
-

@@ -10,4 +10,3 @@ optimal_grid(grid_params = NULL, iter = NULL)
 function that will be used if re-run = TRUE
 }
 \keyword{internal}
-

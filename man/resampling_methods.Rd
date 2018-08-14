@@ -11,4 +11,3 @@ resampling_methods(y, method, iter = 1, REPEATS = 1, sample_rate = NULL,
 Resampling methods used in the RandomSearch file
 }
 \keyword{internal}
-

@@ -27,6 +27,7 @@
 #' @importFrom stats as.formula
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
+#' @importFrom elmNNRcpp elm_predict
 #' @import kknn
 #' @examples
 #'
@@ -118,6 +119,14 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
     TMP_lst_names = unlist(lapply(1:length(grid_params), function(x) if (is.list(grid_params[[x]])) names(grid_params[[x]]) else names(grid_params)[[x]]))
   }
+
+  # if (sum(names(as.list(args(ALGORITHM$algorithm))) %in% c("nhid", "actfun", "init_weights")) == 3) {
+  #
+  #   if (ncol(y) > 1) {
+  #
+  #     y = as.factor(max.col(y) + 1)
+  #   }
+  # }
 
   GRID_lst = Grid_params = GRID_TEST = list()
 
@@ -231,7 +240,6 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
       }
     }
 
-
     out_resampling = resampling_methods(y, resampling_method$method, iter, REPEATS = resampling_method$repeats,
 
                                         sample_rate = resampling_method$sample_rate, FOLDS = resampling_method$folds)
@@ -255,39 +263,101 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
         tmp_args[['x']] = tmp_X[idx_train, ]
 
-        tmp_args[['y']] = tmp_y[idx_train]
+        if (sum(names(as.list(args(ALGORITHM$algorithm))) %in% c("nhid", "actfun", "init_weights")) == 3) {
+
+          if (ncol(tmp_y) > 1) {
+
+            tmp_args[['y']] = tmp_y[idx_train, ]
+          }
+
+          else {
+
+            tmp_args[['y']] = matrix(tmp_y[idx_train, ], nrow = length(tmp_y[idx_train, ]), ncol = 1)
+          }
+        }
+
+        else {
+
+          tmp_args[['y']] = tmp_y[idx_train]
+        }
 
         if (!is.null(Args)) {
 
           for (i in names(Args)) { tmp_args[[i]] = Args[[i]] }
         }
 
-
         tmp_fit = do.call(ALGORITHM$algorithm, tmp_args)
 
-        if (regression == TRUE) {
+        if (sum(names(as.list(args(ALGORITHM$algorithm))) %in% c("nhid", "actfun", "init_weights")) == 3) {
 
-          pred_tr = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression))
-          pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))
+          pred_tr = elmNNRcpp::elm_predict(tmp_fit, tmp_X[idx_train, ])
+          pred_te = elmNNRcpp::elm_predict(tmp_fit, tmp_X[idx_test, ])
+
+          if (ncol(tmp_y) > 1) {
+
+            pred_tr = max.col(pred_tr, ties.method = "random")
+            pred_te = max.col(pred_te, ties.method = "random")
+          }
 
           if (!is.null(UNLABELED_TEST_DATA)) {
 
-            out_TEST_PREDS[[Repeat]] = as.vector(EXCEPTIONS_preds(tmp_fit, UNLABELED_TEST_DATA, regression))
+            tmp_T = elmNNRcpp::elm_predict(tmp_fit, UNLABELED_TEST_DATA)
+
+            if (ncol(tmp_y) > 1) {
+
+              tmp_T = max.col(tmp_T, ties.method = "random")
+            }
+
+            out_TEST_PREDS[[Repeat]] = tmp_T
           }
         }
 
         else {
 
-          pred_tr = EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression)
-          pred_te = EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression)
+          if (regression == TRUE) {
 
-          if (!is.null(UNLABELED_TEST_DATA)) {
+            pred_tr = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression))
+            pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))
 
-            out_TEST_PREDS[[Repeat]] = EXCEPTIONS_preds(tmp_fit, UNLABELED_TEST_DATA, regression)
+            if (!is.null(UNLABELED_TEST_DATA)) {
+
+              out_TEST_PREDS[[Repeat]] = as.vector(EXCEPTIONS_preds(tmp_fit, UNLABELED_TEST_DATA, regression))
+            }
+          }
+
+          else {
+
+            pred_tr = EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression)
+            pred_te = EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression)
+
+            if (!is.null(UNLABELED_TEST_DATA)) {
+
+              out_TEST_PREDS[[Repeat]] = EXCEPTIONS_preds(tmp_fit, UNLABELED_TEST_DATA, regression)
+            }
           }
         }
 
-        out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])
+        if (sum(names(as.list(args(ALGORITHM$algorithm))) %in% c("nhid", "actfun", "init_weights")) == 3) {
+
+          if (ncol(tmp_y) > 1) {
+
+            y_tr_elmn = as.numeric(y[idx_train])
+            y_te_elmn = as.numeric(y[idx_test])
+          }
+
+          else {
+
+            y_tr_elmn = tmp_y[idx_train]
+            y_te_elmn = tmp_y[idx_test]
+          }
+
+          out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = y_tr_elmn, y_te = y_te_elmn)
+        }
+
+        else {
+
+          out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])
+        }
       }
 
       if ('formula' %in% names(DATA) && 'data' %in% names(DATA)) {

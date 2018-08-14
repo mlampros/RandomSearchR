@@ -1,7 +1,7 @@
 Package: RandomSearchR
 Type: Package
 Title: Random Search in R
-Version: 0.3
+Version: 0.4
 Imports:
     gbm,
     h2o,
@@ -15,14 +15,14 @@ Imports:
     extraTrees,
     glmnet,
     stats,
-    elmNN,
+    elmNNRcpp,
     randomForest,
     kernlab,
     devtools,
     utils,
     caret,
     adabag
-Date: 2017-12-23
+Date: 2018-08-14
 Author: Lampros Mouselimis
 Maintainer: Lampros Mouselimis <mouselimislampros@gmail.com>
 Description: The main function random_search_resample performs random search
@@ -32,4 +32,4 @@ LazyData: TRUE
 Suggests:
     testthat,
     covr
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

@@ -10,4 +10,3 @@ EXCEPTIONS_preds(FIT, DATA, regression)
 EXCEPTIONS in predictions [ REGRESSION and CLASSIFICATION ]
 }
 \keyword{internal}
-

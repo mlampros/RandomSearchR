@@ -11,4 +11,3 @@ predict_gbm_workaround_probs(object, newdata, n.trees, type = "link",
 secondary function [ see previous one ]
 }
 \keyword{internal}
-

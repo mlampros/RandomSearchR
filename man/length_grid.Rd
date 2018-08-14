@@ -10,4 +10,3 @@ length_grid(grid_params = NULL)
 function to get the max. length of the parameter-grid
 }
 \keyword{internal}
-
