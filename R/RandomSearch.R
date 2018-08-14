@@ -120,14 +120,6 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
     TMP_lst_names = unlist(lapply(1:length(grid_params), function(x) if (is.list(grid_params[[x]])) names(grid_params[[x]]) else names(grid_params)[[x]]))
   }
 
-  # if (sum(names(as.list(args(ALGORITHM$algorithm))) %in% c("nhid", "actfun", "init_weights")) == 3) {
-  #
-  #   if (ncol(y) > 1) {
-  #
-  #     y = as.factor(max.col(y) + 1)
-  #   }
-  # }
-
   GRID_lst = Grid_params = GRID_TEST = list()
 
   cat('\n') ; cat('grid random search starts ..', '\n')
