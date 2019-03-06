@@ -1,6 +1,6 @@
 [![Travis-CI Build Status](https://travis-ci.org/mlampros/RandomSearchR.svg?branch=master)](https://travis-ci.org/mlampros/RandomSearchR)
 [![codecov.io](https://codecov.io/github/mlampros/RandomSearchR/coverage.svg?branch=master)](https://codecov.io/github/mlampros/RandomSearchR?branch=master)
-
+<a href="https://www.buymeacoffee.com/VY0x8snyh" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" height="21px" ></a>
 
 
 ### Random search in R
