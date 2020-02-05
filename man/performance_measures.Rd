@@ -32,8 +32,13 @@ algorithms and the fourth list shows if any of the models had missing values in 
 
 \dontrun{
 
-perf = performance_measures(list_objects = list(rf = res_rf, logitBoost = res_log_boost), eval_metric = acc, sort = list(variable = 'Median', decreasing = TRUE))
+perf = performance_measures(list_objects = list(rf = res_rf, 
+                                                logitBoost = res_log_boost), 
+                                                eval_metric = acc, 
+                                                sort = list(variable = 'Median', 
+                                                            decreasing = TRUE))
 
 perf
+
 }
 }

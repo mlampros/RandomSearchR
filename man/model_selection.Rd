@@ -48,9 +48,13 @@ This function takes a list of objects after they were subset and re-run on the s
 
 res_rf = random_search_resample(as.factor(y1), tune_iters = 30,
 
-                              resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+                              resampling_method = list(method = 'cross_validation', 
+                                                      repeats = NULL, 
+                                                      sample_rate = NULL, 
+                                                      folds = 5),
 
-                              ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
+                              ALGORITHM = list(package = require(randomForest), 
+                                               algorithm = randomForest),
 
                               grid_params = bst_m$rf,
 
@@ -67,9 +71,13 @@ res_rf = random_search_resample(as.factor(y1), tune_iters = 30,
 
 res_logitBoost = random_search_resample(as.factor(y1), tune_iters = 30,
 
-                                        resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+                                        resampling_method = list(method = 'cross_validation', 
+                                                                 repeats = NULL, 
+                                                                 sample_rate = NULL,
+                                                                 folds = 5),
 
-                                        ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
+                                        ALGORITHM = list(package = require(RWeka), 
+                                                         algorithm = LogitBoost),
 
                                         grid_params = bst_m$logitboost_weka,
 
@@ -82,8 +90,15 @@ res_logitBoost = random_search_resample(as.factor(y1), tune_iters = 30,
 
 tmp_lst = list(rf = res_rf, LogBoost = res_logitBoost)
 
-res = model_selection(tmp_lst, on_Train = FALSE, regression = FALSE, evaluation_metric = 'acc', t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE)
+res = model_selection(tmp_lst, 
+                      on_Train = FALSE, 
+                      regression = FALSE, 
+                      evaluation_metric = 'acc',
+                      t.test.conf.int = 0.95, 
+                      cor_test = list(method = 'spearman'), 
+                      sort_decreasing = TRUE)
 
 res
+
 }
 }

@@ -82,9 +82,13 @@ wrap_grid_args3 = list(ntree = seq(30, 50, 5), mtry = c(2:3), nodesize = seq(5, 
 
 res_rf = random_search_resample(as.factor(y1), tune_iters = 15,
 
-                               resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+                               resampling_method = list(method = 'cross_validation', 
+                                                        repeats = NULL, 
+                                                        sample_rate = NULL,
+                                                        folds = 5),
 
-                               ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
+                               ALGORITHM = list(package = require(randomForest), 
+                                                algorithm = randomForest),
 
                                grid_params = wrap_grid_args3,
 
@@ -105,9 +109,13 @@ lb_lst = list(control = RWeka::Weka_control(H = c(1.0, 0.5), I = seq(10, 30, 5),
 
 res_log_boost = random_search_resample(as.factor(y1), tune_iters = 15,
 
-                                      resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+                                      resampling_method = list(method = 'cross_validation',
+                                                               repeats = NULL, 
+                                                               sample_rate = NULL, 
+                                                               folds = 5),
 
-                                      ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
+                                      ALGORITHM = list(package = require(RWeka), 
+                                                       algorithm = LogitBoost),
 
                                       grid_params = lb_lst,
 

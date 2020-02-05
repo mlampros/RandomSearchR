@@ -61,9 +61,13 @@
 #'
 #' res_rf = random_search_resample(as.factor(y1), tune_iters = 15,
 #' 
-#'                                resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+#'                                resampling_method = list(method = 'cross_validation', 
+#'                                                         repeats = NULL, 
+#'                                                         sample_rate = NULL,
+#'                                                         folds = 5),
 #' 
-#'                                ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
+#'                                ALGORITHM = list(package = require(randomForest), 
+#'                                                 algorithm = randomForest),
 #' 
 #'                                grid_params = wrap_grid_args3,
 #' 
@@ -84,9 +88,13 @@
 #'
 #' res_log_boost = random_search_resample(as.factor(y1), tune_iters = 15,
 #'
-#'                                       resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+#'                                       resampling_method = list(method = 'cross_validation',
+#'                                                                repeats = NULL, 
+#'                                                                sample_rate = NULL, 
+#'                                                                folds = 5),
 #'
-#'                                       ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
+#'                                       ALGORITHM = list(package = require(RWeka), 
+#'                                                        algorithm = LogitBoost),
 #'
 #'                                       grid_params = lb_lst,
 #'

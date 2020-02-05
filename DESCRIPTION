@@ -25,7 +25,8 @@ Suggests:
     caret,
     adabag,
     testthat,
-    covr
+    covr,
+    ranger
 Remotes: mlampros/FeatureSelection
 SystemRequirements: update: apt-get -y update (deb)
 LazyData: TRUE

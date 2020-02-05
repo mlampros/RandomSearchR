@@ -35,9 +35,14 @@ second_preds = function(sublist, eval_metric) {
 #'
 #' \dontrun{
 #' 
-#' perf = performance_measures(list_objects = list(rf = res_rf, logitBoost = res_log_boost), eval_metric = acc, sort = list(variable = 'Median', decreasing = TRUE))
+#' perf = performance_measures(list_objects = list(rf = res_rf, 
+#'                                                 logitBoost = res_log_boost), 
+#'                                                 eval_metric = acc, 
+#'                                                 sort = list(variable = 'Median', 
+#'                                                             decreasing = TRUE))
 #' 
 #' perf
+#' 
 #' }
 
 performance_measures = function(list_objects, eval_metric, sort = list(variable = 'Median', decreasing = TRUE)) {
