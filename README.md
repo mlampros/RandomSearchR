@@ -1,13 +1,10 @@
 [![Travis-CI Build Status](https://travis-ci.org/mlampros/RandomSearchR.svg?branch=master)](https://travis-ci.org/mlampros/RandomSearchR)
 [![codecov.io](https://codecov.io/github/mlampros/RandomSearchR/coverage.svg?branch=master)](https://codecov.io/github/mlampros/RandomSearchR?branch=master)
 <a href="https://www.buymeacoffee.com/VY0x8snyh" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" height="21px" ></a>
-<<<<<<< HEAD
 [![](https://img.shields.io/docker/automated/mlampros/randomsearchr.svg)](https://hub.docker.com/r/mlampros/randomsearchr)
 
 <br>
-=======
 
->>>>>>> 79844893df5b393a2849d3e3a139aed9b4a5a4a9
 
 ### Random search in R
 
