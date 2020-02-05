@@ -340,8 +340,8 @@ testthat::test_that("results for elmNNRcpp using the func_validate function are 
 
 
 
-# binary Classification elmNNRcpp
-#--------------------------------
+# multiclass Classification elmNNRcpp
+#------------------------------------
 
 testthat::test_that("results for elmNNRcpp using the func_validate function are correct, MULTICLASS CLASSIFICATION", {
 
@@ -1947,87 +1947,86 @@ testthat::test_that("results for nnet using the func_validate function are corre
 })
 
 
-# #=================================================================================================================================================================================
-#
-#
-# # ranger
-#
-# # regression
-#
-# testthat::test_that("results for ranger using the func_validate function are correct, REGRESSION", {
-#
-#   grid = list(num.trees = 5:10, mtry = 2:4)
-#
-#   algs = random_search_resample(y1, tune_iters = 3,
-#
-#                                 resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 3),
-#
-#                                 ALGORITHM = list(package = require(ranger), algorithm = ranger),
-#
-#                                 grid_params = grid,
-#
-#                                 DATA = list(formula = form, data = ALL_DATA),
-#
-#                                 Args = list(write.forest = T, probability = F, verbose = F),
-#
-#                                 regression = T, re_run_params = FALSE)
-#
-#   valid_all = unlist(func_validate(algs, ALL_DATA, 3, 3, 'cross_validation', each_resampling_proportion = 2/3, names(grid), T))
-#
-#   testthat::expect_true(sum(valid_all) == 6)
-# })
-#
-#
-# # binary classification
-#
-# testthat::test_that("results for ranger using the func_validate function are correct, BINARY CLASSIFICATION", {
-#
-#   grid = list(num.trees = 5:10, mtry = 2:4)
-#
-#   algs = random_search_resample(as.factor(y1_class), tune_iters = 3,
-#
-#                                 resampling_method = list(method = 'train_test_split', repeats = 5, sample_rate = 2/3, folds = NULL),
-#
-#                                 ALGORITHM = list(package = require(ranger), algorithm = ranger),
-#
-#                                 grid_params = grid,
-#
-#                                 DATA = list(formula = form_class, data = ALL_DATA_class),
-#
-#                                 Args = list(write.forest = T, probability = T, verbose = F),
-#
-#                                 regression = F, re_run_params = FALSE)
-#
-#   valid_all = unlist(func_validate(algs, ALL_DATA_class, 3, 5, 'train_test_split', each_resampling_proportion = 2/3, names(grid), F))
-#
-#   testthat::expect_true(sum(valid_all) == 6)
-# })
-#
-#
-# # multiclass classification
-#
-# testthat::test_that("results for ranger using the func_validate function are correct, MULTICLASS CLASSIFICATION", {
-#
-#   grid = list(num.trees = 5:10, mtry = 2:4)
-#
-#   algs = random_search_resample(as.factor(y1_mlt), tune_iters = 3,
-#
-#                                 resampling_method = list(method = 'bootstrap', repeats = 3, sample_rate = 2/3, folds = NULL),
-#
-#                                 ALGORITHM = list(package = require(ranger), algorithm = ranger),
-#
-#                                 grid_params = grid,
-#
-#                                 DATA = list(formula = form_mlt, data = ALL_DATA_mlt),
-#
-#                                 Args = list(write.forest = T, probability = T, verbose = F),
-#
-#                                 regression = F, re_run_params = FALSE)
-#
-#   valid_all = unlist(func_validate(algs, ALL_DATA_mlt, 3, 3, 'bootstrap', each_resampling_proportion = 2/3, names(grid), F))
-#
-#   testthat::expect_true(sum(valid_all) == 6)
-# })
+#=================================================================================================================================================================================
+
+# ranger
+
+# regression
+
+testthat::test_that("results for ranger using the func_validate function are correct, REGRESSION", {
+
+  grid = list(num.trees = 5:10, mtry = 2:4)
+
+  algs = random_search_resample(y1, tune_iters = 3,
+
+                                resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 3),
+
+                                ALGORITHM = list(package = require(ranger), algorithm = ranger),
+
+                                grid_params = grid,
+
+                                DATA = list(formula = form, data = ALL_DATA),
+
+                                Args = list(write.forest = T, probability = F, verbose = F),
+
+                                regression = T, re_run_params = FALSE)
+
+  valid_all = unlist(func_validate(algs, ALL_DATA, 3, 3, 'cross_validation', each_resampling_proportion = 2/3, names(grid), T))
+
+  testthat::expect_true(sum(valid_all) == 6)
+})
+
+
+# binary classification
+
+testthat::test_that("results for ranger using the func_validate function are correct, BINARY CLASSIFICATION", {
+
+  grid = list(num.trees = 5:10, mtry = 2:4)
+
+  algs = random_search_resample(as.factor(y1_class), tune_iters = 3,
+
+                                resampling_method = list(method = 'train_test_split', repeats = 5, sample_rate = 2/3, folds = NULL),
+
+                                ALGORITHM = list(package = require(ranger), algorithm = ranger),
+
+                                grid_params = grid,
+
+                                DATA = list(formula = form_class, data = ALL_DATA_class),
+
+                                Args = list(write.forest = T, probability = T, verbose = F),
+
+                                regression = F, re_run_params = FALSE)
+
+  valid_all = unlist(func_validate(algs, ALL_DATA_class, 3, 5, 'train_test_split', each_resampling_proportion = 2/3, names(grid), F))
+
+  testthat::expect_true(sum(valid_all) == 6)
+})
+
+
+# multiclass classification
+
+testthat::test_that("results for ranger using the func_validate function are correct, MULTICLASS CLASSIFICATION", {
+
+  grid = list(num.trees = 5:10, mtry = 2:4)
+
+  algs = random_search_resample(as.factor(y1_mlt), tune_iters = 3,
+
+                                resampling_method = list(method = 'bootstrap', repeats = 3, sample_rate = 2/3, folds = NULL),
+
+                                ALGORITHM = list(package = require(ranger), algorithm = ranger),
+
+                                grid_params = grid,
+
+                                DATA = list(formula = form_mlt, data = ALL_DATA_mlt),
+
+                                Args = list(write.forest = T, probability = T, verbose = F),
+
+                                regression = F, re_run_params = FALSE)
+
+  valid_all = unlist(func_validate(algs, ALL_DATA_mlt, 3, 3, 'bootstrap', each_resampling_proportion = 2/3, names(grid), F))
+
+  testthat::expect_true(sum(valid_all) == 6)
+})
 
 #=================================================================================================================================================================================
 

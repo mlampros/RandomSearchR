@@ -2,12 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{predict_gbm_workaround_probs}
 \alias{predict_gbm_workaround_probs}
-\title{secondary function [ see previous one ]}
+\title{secondary function [ See also the previous one. I do NOT call gbm::predict.gbm() but rather the previous customized function ]}
 \usage{
-predict_gbm_workaround_probs(object, newdata, n.trees, type = "link",
-  single.tree = FALSE, ...)
+predict_gbm_workaround_probs(
+  object,
+  newdata,
+  n.trees,
+  type = "link",
+  single.tree = FALSE,
+  ...
+)
 }
 \description{
-secondary function [ see previous one ]
+secondary function [ See also the previous one. I do NOT call gbm::predict.gbm() but rather the previous customized function ]
 }
 \keyword{internal}

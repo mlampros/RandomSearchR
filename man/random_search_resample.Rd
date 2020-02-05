@@ -4,10 +4,19 @@
 \alias{random_search_resample}
 \title{random_search_resample}
 \usage{
-random_search_resample(y, tune_iters = NULL, resampling_method = NULL,
-  ALGORITHM = NULL, grid_params = NULL, DATA = NULL, Args = NULL,
-  regression = FALSE, re_run_params = FALSE, UNLABELED_TEST_DATA = NULL,
-  ...)
+random_search_resample(
+  y,
+  tune_iters = NULL,
+  resampling_method = NULL,
+  ALGORITHM = NULL,
+  grid_params = NULL,
+  DATA = NULL,
+  Args = NULL,
+  regression = FALSE,
+  re_run_params = FALSE,
+  UNLABELED_TEST_DATA = NULL,
+  ...
+)
 }
 \arguments{
 \item{y}{a numeric vector}
@@ -29,6 +38,8 @@ random_search_resample(y, tune_iters = NULL, resampling_method = NULL,
 \item{re_run_params}{a boolean (TRUE, FALSE)}
 
 \item{UNLABELED_TEST_DATA}{either NULL or a data.frame ( matrix ) with the same number of columns as the initial train data}
+
+\item{...}{ellipsis to allow additional parameters}
 }
 \value{
 a list of lists
@@ -41,61 +52,71 @@ This function takes a number of arguments (including a grid of parameters) of an
 }
 \examples{
 
+\dontrun{
+
+
+#..........................
 # MULTICLASS CLASSIFICATION
+#..........................
 
-# library(kknn)
-# data(glass)
+library(kknn)
+data(glass)
 
-# str(glass)
+str(glass)
 
-# X = glass[, -c(1, dim(glass)[2])]
-# y1 = glass[, dim(glass)[2]]
+X = glass[, -c(1, dim(glass)[2])]
+y1 = glass[, dim(glass)[2]]
 
-# form <- as.formula(paste('Type ~', paste(names(X),collapse = '+')))
+form <- as.formula(paste('Type ~', paste(names(X),collapse = '+')))
 
-# y1 = c(1:length(unique(y1)))[ match(y1, sort(unique(y1))) ]       # labels should begin from 1:Inf
-# ALL_DATA = glass
-# ALL_DATA$Type = as.factor(y1)
+y1 = c(1:length(unique(y1)))[ match(y1, sort(unique(y1))) ]       # labels should begin from 1:Inf
+ALL_DATA = glass
+ALL_DATA$Type = as.factor(y1)
 
+
+#........................
 # randomForest classifier
+#........................
 
-# wrap_grid_args3 = list(ntree = seq(30, 50, 5), mtry = c(2:3), nodesize = seq(5, 15, 5))
+wrap_grid_args3 = list(ntree = seq(30, 50, 5), mtry = c(2:3), nodesize = seq(5, 15, 5))
 
-# res_rf = random_search_resample(as.factor(y1), tune_iters = 15,
-#
-#                                resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
-#
-#                                ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
-#
-#                                 grid_params = wrap_grid_args3,
-#
-#                               DATA = list(x = X, y = as.factor(y1)),
-#
-#                               Args = NULL,
-#
-#                               regression = FALSE, re_run_params = FALSE)
+res_rf = random_search_resample(as.factor(y1), tune_iters = 15,
 
+                               resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
 
-# Logit boost
+                               ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
 
-#[ RWeka::WOW("LogitBoost") : gives info for the parameters of the RWeka control list ]
+                               grid_params = wrap_grid_args3,
 
-# lb_lst = list(control = RWeka::Weka_control(H = c(1.0, 0.5), I = seq(10, 30, 5), Q = c(TRUE, FALSE), O = 4))
+                               DATA = list(x = X, y = as.factor(y1)),
+
+                               Args = NULL,
+
+                               regression = FALSE, re_run_params = FALSE)
 
 
-# res_log_boost = random_search_resample(as.factor(y1), tune_iters = 15,
+#............
+# Logit boost        ( RWeka::WOW("LogitBoost") : gives info for the parameters of the RWeka control list )
+#............
 
-#                                       resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
 
-#                                       ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
+lb_lst = list(control = RWeka::Weka_control(H = c(1.0, 0.5), I = seq(10, 30, 5), Q = c(TRUE, FALSE), O = 4))
 
-#                                       grid_params = lb_lst,
 
-#                                       DATA = list(formula = form, data = ALL_DATA),
+res_log_boost = random_search_resample(as.factor(y1), tune_iters = 15,
 
-#                                       Args = NULL,
+                                      resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
 
-#                                       regression = FALSE, re_run_params = FALSE)
+                                      ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
+
+                                      grid_params = lb_lst,
+
+                                      DATA = list(formula = form, data = ALL_DATA),
+
+                                      Args = NULL,
+
+                                      regression = FALSE, re_run_params = FALSE)
+}
 }
 \author{
 Lampros Mouselimis

@@ -420,14 +420,14 @@ testthat::test_that("shuffle data takes a vector as input and returns a vector a
 
   y = c(1:50)
 
-  testthat::expect_true(is.vector(func_shuffle(y, times = 10)))
+  testthat::expect_true(is.vector(FeatureSelection::func_shuffle(y, times = 10)))
 })
 
 testthat::test_that("the length of the input vector equals the length of the output vector", {
 
   y = c(1:50)
 
-  output = func_shuffle(y, times = 10)
+  output = FeatureSelection::func_shuffle(y, times = 10)
 
   testthat::expect_true(length(y) == length(output))
 })
@@ -439,7 +439,7 @@ testthat::test_that("throws an error if the RESP is not a factor", {
 
   y = c(1:10)
 
-  testthat::expect_error(class_folds(5, y, shuffle = T), "RESP must be a factor")
+  testthat::expect_error(FeatureSelection::class_folds(5, y, shuffle = T), "RESP must be a factor")
 })
 
 
@@ -447,14 +447,14 @@ testthat::test_that("returns a warning if the folds are not equally split", {
 
   y = as.factor(sample(1:5, 99, replace = T))
 
-  testthat::expect_warning(class_folds(5, y, shuffle = T), 'the folds are not equally split')
+  testthat::expect_warning(FeatureSelection::class_folds(5, y, shuffle = T), 'the folds are not equally split')
 })
 
 testthat::test_that("the number of folds equals the number of the resulted sublist indices", {
 
   y = as.factor(sample(1:5, 100, replace = T))
 
-  testthat::expect_length(class_folds(5, y, shuffle = T), 5)
+  testthat::expect_length(FeatureSelection::class_folds(5, y, shuffle = T), 5)
 })
 
 
@@ -464,7 +464,7 @@ testthat::test_that("the number of folds equals the number of the resulted subli
 
   y = as.factor(sample(1:5, 100, replace = T))
 
-  testthat::expect_length(class_folds(5, y, shuffle = F), 5)
+  testthat::expect_length(FeatureSelection::class_folds(5, y, shuffle = F), 5)
 })
 
 
@@ -474,7 +474,7 @@ testthat::test_that("throws an error if the RESP is not a factor", {
 
   y = as.factor(c(1:50))
 
-  testthat::expect_error(regr_folds(5, y, stratified = F), "this function is meant for regression for classification use the 'class_folds' function")
+  testthat::expect_error(FeatureSelection::regr_folds(5, y, stratified = F), "this function is meant for regression for classification use the 'class_folds' function")
 })
 
 
@@ -482,14 +482,14 @@ testthat::test_that("returns a warning if the folds are not equally split", {
 
   y = sample(1:5, 99, replace = T)
 
-  testthat::expect_warning(regr_folds(5, y, stratified = F), 'the folds are not equally split')
+  testthat::expect_warning(FeatureSelection::regr_folds(5, y, stratified = F), 'the folds are not equally split')
 })
 
 testthat::test_that("the number of folds equals the number of the resulted sublist indices", {
 
   y = sample(1:5, 100, replace = T)
 
-  testthat::expect_length(regr_folds(5, y, stratified = F), 5)
+  testthat::expect_length(FeatureSelection::regr_folds(5, y, stratified = F), 5)
 })
 
 # object with stratified = T
@@ -498,5 +498,5 @@ testthat::test_that("the number of folds equals the number of the resulted subli
 
   y = sample(1:5, 100, replace = T)
 
-  testthat::expect_length(regr_folds(5, y, stratified = T), 5)
+  testthat::expect_length(FeatureSelection::regr_folds(5, y, stratified = T), 5)
 })

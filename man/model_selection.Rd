@@ -4,9 +4,15 @@
 \alias{model_selection}
 \title{model_selection}
 \usage{
-model_selection(list_of_algos, on_Train = FALSE, regression = TRUE,
-  evaluation_metric = NULL, t.test.conf.int = 0.95, cor_test = NULL,
-  sort_decreasing = TRUE)
+model_selection(
+  list_of_algos,
+  on_Train = FALSE,
+  regression = TRUE,
+  evaluation_metric = NULL,
+  t.test.conf.int = 0.95,
+  cor_test = NULL,
+  sort_decreasing = TRUE
+)
 }
 \arguments{
 \item{list_of_algos}{a list of model objects (first use the subset_mods to select the best and then re-run)}
@@ -34,44 +40,50 @@ This function takes a list of objects after they were subset and re-run on the s
 }
 \examples{
 
+\dontrun{
+
+#..............
 # random-forest
+#..............
 
-# res_rf = random_search_resample(as.factor(y1), tune_iters = 30,
-#
-#                                 resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
-#
-#                                 ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
-#
-#                                 grid_params = bst_m$rf,
-#
-#                                 DATA = list(x = X, y = as.factor(y1)),
-#
-#                                 Args = NULL,
-#
-#                                 regression = FALSE, re_run_params = TRUE)
-#
-#
+res_rf = random_search_resample(as.factor(y1), tune_iters = 30,
+
+                              resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+
+                              ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
+
+                              grid_params = bst_m$rf,
+
+                              DATA = list(x = X, y = as.factor(y1)),
+
+                              Args = NULL,
+
+                              regression = FALSE, re_run_params = TRUE)
+
+
+#..............
 # RWeka Bagging
-#
-#
-# res_logitBoost = random_search_resample(as.factor(y1), tune_iters = 30,
-#
-#                                         resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
-#
-#                                         ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
-#
-#                                         grid_params = bst_m$logitboost_weka,
-#
-#                                         DATA = list(formula = form, data = ALL_DATA),
-#
-#                                         Args = NULL,
-#
-#                                         regression = FALSE, re_run_params = TRUE)
-#
-#
-# tmp_lst = list(rf = res_rf, LogBoost = res_logitBoost)
-#
-#res = model_selection(tmp_lst, on_Train = FALSE, regression = FALSE, evaluation_metric = 'acc', t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE)
+#..............
 
-# res
+res_logitBoost = random_search_resample(as.factor(y1), tune_iters = 30,
+
+                                        resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+
+                                        ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
+
+                                        grid_params = bst_m$logitboost_weka,
+
+                                        DATA = list(formula = form, data = ALL_DATA),
+
+                                        Args = NULL,
+
+                                        regression = FALSE, re_run_params = TRUE)
+
+
+tmp_lst = list(rf = res_rf, LogBoost = res_logitBoost)
+
+res = model_selection(tmp_lst, on_Train = FALSE, regression = FALSE, evaluation_metric = 'acc', t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE)
+
+res
+}
 }

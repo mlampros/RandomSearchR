@@ -2,23 +2,28 @@
 
 language: r
 
+
 sudo: required
 cache: packages
+
 
 apt_packages:
   - r-cran-rjava
 
+
 install:
   - sudo apt-get install libgsl0-dev
   - sudo apt-get install openjdk-7-*
-  - Rscript -e 'install.packages(c("devtools", "roxygen2","testthat", "doMC", "dplyr", "covr", "gbm", "h2o", "kknn", "xgboost", "MASS", "RWeka", "nnet", "e1071", "LiblineaR", "extraTrees", "glmnet", "stats", "elmNNRcpp", "randomForest",
-    "kernlab", "caret", "adabag"))'
+  - Rscript -e "install.packages(c( 'stats', 'utils', 'h2o', 'xgboost', 'elmNNRcpp', 'RWeka', 'gbm', 'kknn', 'MASS', 'nnet', 'e1071', 'LiblineaR', 'extraTrees', 'glmnet', 'randomForest', 'kernlab', 'caret', 'adabag', 'testthat', 'covr', 'remotes' ), repos =  'https://cloud.r-project.org/' )"
+  - Rscript -e "remotes::install_github(c('mlampros/FeatureSelection'), upgrade = 'always', dependencies = TRUE, repos = 'https://cloud.r-project.org/')"
 
  
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'
   
+
 warnings_are_errors: false
+
 
 notifications:
   email:

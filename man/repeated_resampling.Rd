@@ -4,8 +4,14 @@
 \alias{repeated_resampling}
 \title{Repeated resampling methods}
 \usage{
-repeated_resampling(y, method, REPEATS = 1, sample_rate = NULL,
-  FOLDS = NULL, seed = 1)
+repeated_resampling(
+  y,
+  method,
+  REPEATS = 1,
+  sample_rate = NULL,
+  FOLDS = NULL,
+  seed = 1
+)
 }
 \arguments{
 \item{y}{the response variable (continuous or factor)}
@@ -31,8 +37,11 @@ This function is meant for splitting the data using three resampling methods, wi
 }
 \examples{
 
-# data(Boston, package = 'MASS')
-# y = Boston$medv
-# res = repeated_resampling(y, 'bootstrap', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL)
+\dontrun{
 
+data(Boston, package = 'MASS')
+y = Boston$medv
+
+res = repeated_resampling(y, 'bootstrap', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL)
+}
 }

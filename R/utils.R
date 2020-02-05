@@ -1,137 +1,13 @@
 
-#' shuffle data
-#'
-#' this function shuffles the items of a vector
-#' @keywords internal
 
-func_shuffle = function(vec, times = 10) {
-
-  for (i in 1:times) {
-
-    out = sample(vec, length(vec))
-  }
-  out
-}
-
-
-#' stratified folds (in classification)                      [ detailed information about class_folds in the FeatureSelectionR package ]
-#'
-#' this function creates stratified folds in binary and multiclass classification
-#' @keywords internal
-#' @importFrom utils combn
-
-
-class_folds = function(folds, RESP, shuffle = FALSE) {
-
-  if (!is.factor(RESP)) {
-
-    stop(simpleError("RESP must be a factor"))
-  }
-
-  clas = lapply(unique(RESP), function(x) which(RESP == x))
-
-  len = lapply(clas, function(x) length(x))
-
-  samp_vec = rep(1/folds, folds)
-
-  prop = lapply(len, function(y) sapply(1:length(samp_vec), function(x) round(y * samp_vec[x])))
-
-  repl = unlist(lapply(prop, function(x) sapply(1:length(x), function(y) rep(paste0('fold_', y), x[y]))))
-
-  spl = suppressWarnings(split(1:length(RESP), repl))
-
-  sort_names = paste0('fold_', 1:folds)
-
-  spl = spl[sort_names]
-
-  if (length(table(unlist(lapply(spl, function(x) length(x))))) > 1) {
-
-    warning('the folds are not equally split')            # the warning appears when I divide the unique labels to the number of folds and instead of an integer I get a float
-  }
-
-  if (shuffle == TRUE) {
-
-    spl = lapply(spl, function(x) func_shuffle(x))           # the indices of the unique levels will be shuffled
-  }
-
-  ind = t(combn(1:folds, 2))
-
-  ind1 = apply(ind, 1, function(x) length(intersect(spl[x[1]], spl[x[2]])))
-
-  if (sum(ind1) > 0) {
-
-    stop(simpleError("there is an intersection between the resulted indexes of the folds"))
-
-  }
-
-  if (length(unlist(spl)) != length(RESP)) {
-
-    stop(simpleError("the number of items in the folds are not equal with the response items"))
-  }
-
-  spl
-}
-
-
-#' create folds (in regression)                                           [ detailed information about class_folds in the FeatureSelectionR package ]
-#'
-#' this function creates both stratified and non-stratified folds in regression
-#' @keywords internal
-
-
-regr_folds = function(folds, RESP, stratified = FALSE) {
-
-  if (is.factor(RESP)) {
-
-    stop(simpleError("this function is meant for regression for classification use the 'class_folds' function"))
-  }
-
-  samp_vec = rep(1/folds, folds)
-
-  sort_names = paste0('fold_', 1:folds)
-
-
-  if (stratified == TRUE) {
-
-    stratif = cut(RESP, breaks = folds)
-
-    clas = lapply(unique(stratif), function(x) which(stratif == x))
-
-    len = lapply(clas, function(x) length(x))
-
-    prop = lapply(len, function(y) sapply(1:length(samp_vec), function(x) round(y * samp_vec[x])))
-
-    repl = unlist(lapply(prop, function(x) sapply(1:length(x), function(y) rep(paste0('fold_', y), x[y]))))
-
-    spl = suppressWarnings(split(1:length(RESP), repl))}
-
-  else {
-
-    prop = lapply(length(RESP), function(y) sapply(1:length(samp_vec), function(x) round(y * samp_vec[x])))
-
-    repl = func_shuffle(unlist(lapply(prop, function(x) sapply(1:length(x), function(y) rep(paste0('fold_', y), x[y])))))
-
-    spl = suppressWarnings(split(1:length(RESP), repl))
-  }
-
-  spl = spl[sort_names]
-
-  if (length(table(unlist(lapply(spl, function(x) length(x))))) > 1) {
-
-    warning('the folds are not equally split')            # the warning appears when I divide the unique labels to the number of folds and instead of an ingeger I get a float
-  }
-
-  if (length(unlist(spl)) != length(RESP)) {
-
-    stop(simpleError("the length of the splits are not equal with the length of the response"))
-  }
-
-  spl
-}
+utils::globalVariables(c("predict"))                  # make 'predict' a global variable as the same naming appears in almost all utilized R packages
 
 
 #' evaluation metric for regression
-#' @keywords internal
+#' 
+#' @param y_true a numeric vector specifying the response variable
+#' @param y_pred a numeric vector specifying the predictions
+#' 
 #' @export
 
 mse = function(y_true, y_pred) {
@@ -143,7 +19,10 @@ mse = function(y_true, y_pred) {
 
 
 #' evaluation metric for binary and multiclass classification
-#' @keywords internal
+#' 
+#' @param y_true a numeric vector specifying the response variable
+#' @param preds a numeric vector specifying the predictions
+#' 
 #' @export
 
 acc = function(y_true, preds) {
@@ -156,8 +35,12 @@ acc = function(y_true, preds) {
 }
 
 
+
 #' grid function  [ this function takes a grid of parameters, IF the grid includes a list and this list includes vectors then it takes a sample of 1 else if it includes a single value then it returns this value ]
+#' 
 #' @keywords internal
+#' 
+#' @importFrom RWeka Weka_control
 
 function_grid = function(grid_params = NULL) {
 
@@ -183,8 +66,11 @@ function_grid = function(grid_params = NULL) {
 }
 
 
+
 #' secondary function for weka-algos (if re-run = TRUE)
+#' 
 #' @keywords internal
+#' 
 #' @importFrom RWeka Weka_control
 
 func_weka_rerun = function(bst_lst) {
@@ -210,8 +96,8 @@ func_weka_rerun = function(bst_lst) {
 
 
 
-
 #' function that will be used if re-run = TRUE
+#' 
 #' @keywords internal
 
 optimal_grid = function(grid_params = NULL, iter = NULL) {
@@ -222,7 +108,9 @@ optimal_grid = function(grid_params = NULL, iter = NULL) {
 }
 
 
+
 #' function to get the max. length of the parameter-grid
+#' 
 #' @keywords internal
 
 length_grid = function(grid_params = NULL) {
@@ -233,11 +121,16 @@ length_grid = function(grid_params = NULL) {
 }
 
 
-#' [  http://www.samuelbosch.com/2015/09/workaround-ntrees-is-missing-in-r.html,  with minor modifications ]
-#' work around for bug in gbm 2.1.1 -- PREDICTION-PROBABILITIES when predict(fit, data, type = 'response')
+
+#' work around for bug in gbm 2.1.1 with minor modifications -- PREDICTION-PROBABILITIES when predict(fit, data, type = 'response')
+#' 
+#' @references 
+#' 
+#' http://www.samuelbosch.com/2015/09/workaround-ntrees-is-missing-in-r.html
+#' 
 #' @keywords internal
-#' @importFrom gbm gbm.perf
-#' @importFrom gbm predict.gbm
+#' 
+#' @importFrom gbm gbm.perf predict.gbm
 
 predict.gbm <- function (object, newdata, n.trees, type = "link", single.tree = FALSE, ...) {
 
@@ -264,7 +157,9 @@ predict.gbm <- function (object, newdata, n.trees, type = "link", single.tree = 
 }
 
 
-#' secondary function [ see previous one ]
+
+#' secondary function [ See also the previous one. I do NOT call gbm::predict.gbm() but rather the previous customized function ]
+#' 
 #' @keywords internal
 
 predict_gbm_workaround_probs <- function(object, newdata, n.trees, type = "link", single.tree = FALSE, ...) {        # don't change anything, otherwise rstudio crashes
@@ -273,14 +168,15 @@ predict_gbm_workaround_probs <- function(object, newdata, n.trees, type = "link"
 
     out = predict.gbm(object, newdata, n.trees, type = type, single.tree = single.tree, ...)
     out = matrix(out, ncol = length(out)/dim(newdata)[1], nrow = dim(newdata)[1], byrow = FALSE)
-    }
+  }
 
   else if (object$distribution$name != 'multinomial' && type == 'response') {                             # binomial probs
 
     tmp_out = predict.gbm(object, newdata, n.trees, type = type, single.tree = single.tree, ...)
     tmp = matrix(tmp_out, ncol = length(tmp_out)/dim(newdata)[1], nrow = dim(newdata)[1], byrow = FALSE)
-    out = cbind(matrix(1.0 - tmp, ncol = 1), tmp)}
-
+    out = cbind(matrix(1.0 - tmp, ncol = 1), tmp)
+  }
+  
   else {
 
     out = predict.gbm(object, newdata, n.trees, type = type, single.tree = single.tree, ...)
@@ -292,12 +188,13 @@ predict_gbm_workaround_probs <- function(object, newdata, n.trees, type = "link"
 
 
 #' EXCEPTIONS in predictions [ REGRESSION and CLASSIFICATION ]
+#' 
 #' @keywords internal
 
 
 EXCEPTIONS_preds = function(FIT, DATA, regression) {
 
-  if (regression == FALSE) {
+  if (!regression) {
 
     potential_class = c("boosting", "lda", "naiveBayes", "extraTrees", "gbm", "cv.glmnet", "LiblineaR", "svm", "nnet", "ranger")}
 
@@ -314,7 +211,7 @@ EXCEPTIONS_preds = function(FIT, DATA, regression) {
 
     idx_nams = which(potential_class == tmp_class)
 
-    if (regression == TRUE) {
+    if (regression) {
 
       switch(potential_class[idx_nams],
 
@@ -325,7 +222,8 @@ EXCEPTIONS_preds = function(FIT, DATA, regression) {
              svm = {preds = predict(FIT, DATA)},
 
              LiblineaR = {preds = predict(FIT, DATA)$predictions}
-      )}
+      )
+    }
 
     else {
 
@@ -356,12 +254,13 @@ EXCEPTIONS_preds = function(FIT, DATA, regression) {
              LiblineaR = {preds = predict(FIT, DATA, proba = TRUE)$probabilities},                                    # Computing probabilities is only supported for Logistic Regressions (LiblineaR 'type' 0, 6 or 7)
 
              svm = {preds = attr(predict(FIT, DATA, probability = TRUE), "prob")}
-      )}
+      )
+    }
   }
 
   else {
 
-    if (regression == FALSE) preds = predict(FIT, DATA, type = 'prob') else preds = predict(FIT, DATA)
+    if (!regression) preds = predict(FIT, DATA, type = 'prob') else preds = predict(FIT, DATA)
   }
 
   preds
@@ -379,74 +278,95 @@ EXCEPTIONS_preds = function(FIT, DATA, regression) {
 #' @param FOLDS the number of folds for the 'cross_validation' method
 #' @param seed an integer specifying the RNG
 #' @return a list of sublist(s)
+#' 
+#' @importFrom FeatureSelection class_folds regr_folds
+#' 
 #' @details
 #' This function is meant for splitting the data using three resampling methods, with the option of multiple repeats.
+#' 
 #' @export
+#' 
 #' @examples
 #'
-#' # data(Boston, package = 'MASS')
-#' # y = Boston$medv
-#' # res = repeated_resampling(y, 'bootstrap', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL)
-#'
+#' \dontrun{
+#' 
+#' data(Boston, package = 'MASS')
+#' y = Boston$medv
+#' 
+#' res = repeated_resampling(y, 'bootstrap', REPEATS = 2, sample_rate = 0.75, FOLDS = NULL)
+#' }
 
 
 repeated_resampling = function (y, method, REPEATS = 1, sample_rate = NULL, FOLDS = NULL, seed = 1) {
   
-  if (!method %in% c("bootstrap", "train_test_split", "cross_validation")) 
+  if (!method %in% c("bootstrap", "train_test_split", "cross_validation")) {
     stop("invalid method. Choose one of bootstrap, train_test_split, cross_validation")
-  if (method %in% c("bootstrap", "train_test_split") && is.null(sample_rate)) 
+  }
+  if (method %in% c("bootstrap", "train_test_split") && is.null(sample_rate)) {
     stop("if method is 'bootstrap' or 'train_test_split' then the sample_rate parameter shouldn't be NULL and the opposite")
-  if (method == "cross_validation" && (is.null(FOLDS) || FOLDS < 
-                                       2)) 
+  }
+  if (method == "cross_validation" && (is.null(FOLDS) || FOLDS < 2)) {
     stop("if method is 'cross_validation' then the FOLDS parameter should be non-NULL and greater than 1")
-  if (REPEATS < 1) 
+  }
+  if (REPEATS < 1) {
     stop("the number of REPEATS should be greater than 0")
-  method = match.arg(method, c("bootstrap", "train_test_split", 
-                               "cross_validation"))
-  switch(method, bootstrap = {
-    idx_train_lst = idx_test_lst = list()
-    for (Repeat in 1:REPEATS) {
-      set.seed(Repeat * seed)
-      tmp_train_idx = sample(1:length(y), size = round(length(y) * 
-                                                         sample_rate), replace = TRUE)
-      idx_train_lst[[Repeat]] = tmp_train_idx
-      idx_test_lst[[Repeat]] = setdiff(1:length(y), tmp_train_idx)
-    }
-  }, train_test_split = {
-    idx_train_lst = idx_test_lst = list()
-    for (Repeat in 1:REPEATS) {
-      set.seed(Repeat * seed)
-      tmp_train_idx = sample(1:length(y), size = round(length(y) * 
-                                                         sample_rate), replace = FALSE)
-      idx_train_lst[[Repeat]] = tmp_train_idx
-      idx_test_lst[[Repeat]] = setdiff(1:length(y), tmp_train_idx)
-    }
-  }, cross_validation = {
-    idx_train_lst = idx_test_lst = list()
-    for (Repeat in 1:REPEATS) {
-      
-      if (is.factor(y)) {
-        set.seed(Repeat * seed)
-        tmp_folds_test = class_folds(FOLDS, y)
-        idx_train_lst[[Repeat]] = lapply(1:length(tmp_folds_test), function(x) as.vector(unlist(tmp_folds_test[-x])))
-        
-        idx_test_lst[[Repeat]] = tmp_folds_test} 
-      
-      else {
-        
-        set.seed(Repeat * seed)
-        tmp_folds_test = regr_folds(FOLDS, y)
-        idx_train_lst[[Repeat]] = lapply(1:length(tmp_folds_test), function(x) as.vector(unlist(tmp_folds_test[-x])))
-        
-        idx_test_lst[[Repeat]] = tmp_folds_test
-      }
-    }
-  })
+  }
+  method = match.arg(method, c("bootstrap", "train_test_split", "cross_validation"))
+  
+  switch(method,
+         
+         bootstrap = {
+    
+           idx_train_lst = idx_test_lst = list()
+           for (Repeat in 1:REPEATS) {
+             set.seed(Repeat * seed)
+             tmp_train_idx = sample(1:length(y), size = round(length(y) * sample_rate), replace = TRUE)
+             idx_train_lst[[Repeat]] = tmp_train_idx
+             idx_test_lst[[Repeat]] = setdiff(1:length(y), tmp_train_idx)
+           }
+         }, 
+  
+         train_test_split = {
+           idx_train_lst = idx_test_lst = list()
+           for (Repeat in 1:REPEATS) {
+             set.seed(Repeat * seed)
+             tmp_train_idx = sample(1:length(y), size = round(length(y) * sample_rate), replace = FALSE)
+             idx_train_lst[[Repeat]] = tmp_train_idx
+             idx_test_lst[[Repeat]] = setdiff(1:length(y), tmp_train_idx)
+           }
+         }, 
+  
+         cross_validation = {
+           idx_train_lst = idx_test_lst = list()
+           for (Repeat in 1:REPEATS) {
+             
+             if (is.factor(y)) {
+               set.seed(Repeat * seed)
+               tmp_folds_test = FeatureSelection::class_folds(FOLDS, y)
+               idx_train_lst[[Repeat]] = lapply(1:length(tmp_folds_test), function(x) as.vector(unlist(tmp_folds_test[-x])))
+               
+               idx_test_lst[[Repeat]] = tmp_folds_test} 
+             
+             else {
+               
+               set.seed(Repeat * seed)
+               tmp_folds_test = FeatureSelection::regr_folds(FOLDS, y)
+               idx_train_lst[[Repeat]] = lapply(1:length(tmp_folds_test), function(x) as.vector(unlist(tmp_folds_test[-x])))
+               
+               idx_test_lst[[Repeat]] = tmp_folds_test
+             }
+           }
+         }
+  )
+  
   return(list(idx_train = idx_train_lst, idx_test = idx_test_lst))
 }
 
 
+
 #' Resampling methods used in the RandomSearch file
+#' 
+#' @importFrom FeatureSelection class_folds regr_folds
 #'
 #' @keywords internal
 #' 
@@ -489,13 +409,13 @@ resampling_methods = function(y, method, iter = 1, REPEATS = 1, sample_rate = NU
            if (is.factor(y)) {
 
              set.seed(iter)
-             idx_test_lst = class_folds(FOLDS, y)
+             idx_test_lst = FeatureSelection::class_folds(FOLDS, y)
              idx_train_lst = lapply(1:length(idx_test_lst), function(x) unlist(idx_test_lst[-x]))}
 
            else {
 
              set.seed(iter)
-             idx_test_lst = regr_folds(FOLDS, y)
+             idx_test_lst = FeatureSelection::regr_folds(FOLDS, y)
              idx_train_lst = lapply(1:length(idx_test_lst), function(x) unlist(idx_test_lst[-x]))}
          }
   )

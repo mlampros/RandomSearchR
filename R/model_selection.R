@@ -1,7 +1,8 @@
+
 #' model_selection
 #'
 #' compare pairs of models using statistics such as t.test, correlation, evaluation.
-
+#' 
 #' @param list_of_algos a list of model objects (first use the subset_mods to select the best and then re-run)
 #' @param on_Train if TRUE, then it applies the test-statistics on train-data
 #' @param regression is it a regression or a classification task
@@ -10,53 +11,63 @@
 #' @param cor_test one of spearman, pearson, kendal
 #' @param sort_decreasing sorts the resulted data.frame by the evaluation metric of the first algorithm in either increasing or decreasing order
 #' @return a data frame
+#' 
 #' @details
 #' This function takes a list of objects after they were subset and re-run on the same resampling method. It returns a data frame with statistics for each pair of them.
+#' 
 #' @export
+#' 
 #' @importFrom stats cor.test t.test
+#' @importFrom utils combn
+#' 
 #' @examples
 #'
+#' \dontrun{
+#' 
+#' #..............
 #' # random-forest
+#' #..............
 #'
-#'# res_rf = random_search_resample(as.factor(y1), tune_iters = 30,
-#'#
-#'#                                 resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
-#'#
-#'#                                 ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
-#'#
-#'#                                 grid_params = bst_m$rf,
-#'#
-#'#                                 DATA = list(x = X, y = as.factor(y1)),
-#'#
-#'#                                 Args = NULL,
-#'#
-#'#                                 regression = FALSE, re_run_params = TRUE)
-#'#
-#'#
+#'res_rf = random_search_resample(as.factor(y1), tune_iters = 30,
+#'
+#'                               resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+#'
+#'                               ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
+#'
+#'                               grid_params = bst_m$rf,
+#'
+#'                               DATA = list(x = X, y = as.factor(y1)),
+#'
+#'                               Args = NULL,
+#'
+#'                               regression = FALSE, re_run_params = TRUE)
+#'
+#'
+#'#..............
 #'# RWeka Bagging
-#'#
-#'#
-#'# res_logitBoost = random_search_resample(as.factor(y1), tune_iters = 30,
-#'#
-#'#                                         resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
-#'#
-#'#                                         ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
-#'#
-#'#                                         grid_params = bst_m$logitboost_weka,
-#'#
-#'#                                         DATA = list(formula = form, data = ALL_DATA),
-#'#
-#'#                                         Args = NULL,
-#'#
-#'#                                         regression = FALSE, re_run_params = TRUE)
-#'#
-#'#
-#'# tmp_lst = list(rf = res_rf, LogBoost = res_logitBoost)
-#'#
-#' #res = model_selection(tmp_lst, on_Train = FALSE, regression = FALSE, evaluation_metric = 'acc', t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE)
+#'#..............
 #'
-#'# res
-
+#' res_logitBoost = random_search_resample(as.factor(y1), tune_iters = 30,
+#'
+#'                                         resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+#'
+#'                                         ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
+#'
+#'                                         grid_params = bst_m$logitboost_weka,
+#'
+#'                                         DATA = list(formula = form, data = ALL_DATA),
+#'
+#'                                         Args = NULL,
+#'
+#'                                         regression = FALSE, re_run_params = TRUE)
+#'
+#'
+#' tmp_lst = list(rf = res_rf, LogBoost = res_logitBoost)
+#'
+#' res = model_selection(tmp_lst, on_Train = FALSE, regression = FALSE, evaluation_metric = 'acc', t.test.conf.int = 0.95, cor_test = list(method = 'spearman'), sort_decreasing = TRUE)
+#'
+#' res
+#' }
 
 
 model_selection = function(list_of_algos, on_Train = FALSE, regression = TRUE, evaluation_metric = NULL, t.test.conf.int = 0.95, cor_test = NULL, sort_decreasing = TRUE) {
@@ -113,13 +124,13 @@ model_selection = function(list_of_algos, on_Train = FALSE, regression = TRUE, e
 
   evaluate_algs = unlist(eval_algs)
 
-  ind = t(combn(tmp_names, 2))
+  ind = t(utils::combn(tmp_names, 2))
 
   out_vec = COR_LST = list()
 
   for (i in 1:dim(ind)[1]) {
 
-    out_vec[[i]] = unlist(t.test(dat[[ind[i, 1]]], dat[[ind[i, 2]]], paired = T, conf.level = t.test.conf.int))[c(3:6)]
+    out_vec[[i]] = unlist(stats::t.test(dat[[ind[i, 1]]], dat[[ind[i, 2]]], paired = T, conf.level = t.test.conf.int))[c(3:6)]
 
     if (!is.null(cor_test)) {
 

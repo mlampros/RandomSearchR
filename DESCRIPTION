@@ -1,35 +1,32 @@
 Package: RandomSearchR
 Type: Package
 Title: Random Search in R
-Version: 0.4
-Imports:
-    gbm,
-    h2o,
+Version: 1.0.0
+Date: 2020-02-05
+Author: Lampros Mouselimis
+Maintainer: Lampros Mouselimis <mouselimislampros@gmail.com>
+BugReports: https://github.com/mlampros/RandomSearchR/issues
+URL: https://github.com/mlampros/RandomSearchR
+Description: This R package performs random search, model selection and performance measures of selected models. See also the 'tests' directory for more information.
+License: GPL-3
+Encoding: UTF-8
+Depends: R(>= 3.2)
+Imports: stats, utils, h2o, xgboost, elmNNRcpp, RWeka, gbm, FeatureSelection
+Suggests:
     kknn,
-    xgboost,
     MASS,
-    RWeka,
     nnet,
     e1071,
     LiblineaR,
     extraTrees,
     glmnet,
-    stats,
-    elmNNRcpp,
     randomForest,
     kernlab,
-    devtools,
-    utils,
     caret,
-    adabag
-Date: 2018-08-14
-Author: Lampros Mouselimis
-Maintainer: Lampros Mouselimis <mouselimislampros@gmail.com>
-Description: The main function random_search_resample performs random search
-    resampling using resampling techniques.
-License: GPL-3
-LazyData: TRUE
-Suggests:
+    adabag,
     testthat,
     covr
-RoxygenNote: 6.0.1
+Remotes: mlampros/FeatureSelection
+SystemRequirements: update: apt-get -y update (deb)
+LazyData: TRUE
+RoxygenNote: 7.0.2

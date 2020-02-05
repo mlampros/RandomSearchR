@@ -11,6 +11,7 @@ ALL_DATA = Boston
 # binary classification
 data(ionosphere, package = 'kknn')
 ionosphere = ionosphere[, -2]                                                                             # remove second column which has a single unique value
+ionosphere$V1 = as.numeric(ionosphere$V1)
 X_class = ionosphere[, -dim(ionosphere)[2]]
 y1_class = ionosphere[, dim(ionosphere)[2]]
 form_class <- as.formula(paste('class ~', paste(names(X_class), collapse = '+')))

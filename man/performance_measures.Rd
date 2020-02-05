@@ -4,8 +4,11 @@
 \alias{performance_measures}
 \title{performance_measures}
 \usage{
-performance_measures(list_objects, eval_metric, sort = list(variable =
-  "Median", decreasing = TRUE))
+performance_measures(
+  list_objects,
+  eval_metric,
+  sort = list(variable = "Median", decreasing = TRUE)
+)
 }
 \arguments{
 \item{list_objects}{a list of model objects}
@@ -27,6 +30,10 @@ algorithms and the fourth list shows if any of the models had missing values in 
 }
 \examples{
 
-# perf = performance_measures(list_objects = list(rf = res_rf, logitBoost = res_log_boost), eval_metric = acc, sort = list(variable = 'Median', decreasing = TRUE))
-# perf
+\dontrun{
+
+perf = performance_measures(list_objects = list(rf = res_rf, logitBoost = res_log_boost), eval_metric = acc, sort = list(variable = 'Median', decreasing = TRUE))
+
+perf
+}
 }

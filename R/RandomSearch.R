@@ -13,80 +13,89 @@
 #' @param regression a boolean (TRUE, FALSE)
 #' @param re_run_params a boolean (TRUE, FALSE)
 #' @param UNLABELED_TEST_DATA either NULL or a data.frame ( matrix ) with the same number of columns as the initial train data
+#' @param ... ellipsis to allow additional parameters
+#' 
 #' @return a list of lists
+#' 
 #' @author Lampros Mouselimis
+#' 
 #' @details
 #' This function takes a number of arguments (including a grid of parameters) of an algorithm and using random search it returns a list of predictions and parameters for the chosen resampling method.
+#' 
 #' @export
-#' @importFrom h2o h2o.init
-#' @importFrom h2o as.h2o
-#' @importFrom h2o h2o.predict
-#' @importFrom h2o h2o.no_progress
-#' @importFrom xgboost xgb.DMatrix
-#' @importFrom xgboost getinfo
-#' @importFrom stats as.formula
-#' @importFrom utils txtProgressBar
-#' @importFrom utils setTxtProgressBar
+#' 
+#' @importFrom h2o h2o.init as.h2o h2o.predict h2o.no_progress
+#' @importFrom xgboost xgb.DMatrix getinfo
+#' @importFrom utils txtProgressBar setTxtProgressBar getFromNamespace globalVariables
 #' @importFrom elmNNRcpp elm_predict
-#' @import kknn
+#' 
 #' @examples
 #'
+#' \dontrun{
+#' 
+#' 
+#' #..........................
 #' # MULTICLASS CLASSIFICATION
+#' #..........................
 #'
-#' # library(kknn)
-#' # data(glass)
+#' library(kknn)
+#' data(glass)
 #'
-#' # str(glass)
+#' str(glass)
 #'
-#' # X = glass[, -c(1, dim(glass)[2])]
-#' # y1 = glass[, dim(glass)[2]]
+#' X = glass[, -c(1, dim(glass)[2])]
+#' y1 = glass[, dim(glass)[2]]
 #'
-#' # form <- as.formula(paste('Type ~', paste(names(X),collapse = '+')))
+#' form <- as.formula(paste('Type ~', paste(names(X),collapse = '+')))
 #'
-#' # y1 = c(1:length(unique(y1)))[ match(y1, sort(unique(y1))) ]       # labels should begin from 1:Inf
-#' # ALL_DATA = glass
-#' # ALL_DATA$Type = as.factor(y1)
+#' y1 = c(1:length(unique(y1)))[ match(y1, sort(unique(y1))) ]       # labels should begin from 1:Inf
+#' ALL_DATA = glass
+#' ALL_DATA$Type = as.factor(y1)
 #'
+#'
+#' #........................
 #' # randomForest classifier
+#' #........................
 #'
-#' # wrap_grid_args3 = list(ntree = seq(30, 50, 5), mtry = c(2:3), nodesize = seq(5, 15, 5))
+#' wrap_grid_args3 = list(ntree = seq(30, 50, 5), mtry = c(2:3), nodesize = seq(5, 15, 5))
 #'
-#' # res_rf = random_search_resample(as.factor(y1), tune_iters = 15,
-#' #
-#' #                                resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
-#' #
-#' #                                ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
-#' #
-#' #                                 grid_params = wrap_grid_args3,
-#' #
-#' #                               DATA = list(x = X, y = as.factor(y1)),
-#' #
-#' #                               Args = NULL,
-#' #
-#' #                               regression = FALSE, re_run_params = FALSE)
+#' res_rf = random_search_resample(as.factor(y1), tune_iters = 15,
+#' 
+#'                                resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
+#' 
+#'                                ALGORITHM = list(package = require(randomForest), algorithm = randomForest),
+#' 
+#'                                grid_params = wrap_grid_args3,
+#' 
+#'                                DATA = list(x = X, y = as.factor(y1)),
+#' 
+#'                                Args = NULL,
+#' 
+#'                                regression = FALSE, re_run_params = FALSE)
 #'
-#'
-#' # Logit boost
-#'
-#' #[ RWeka::WOW("LogitBoost") : gives info for the parameters of the RWeka control list ]
-#'
-#' # lb_lst = list(control = RWeka::Weka_control(H = c(1.0, 0.5), I = seq(10, 30, 5), Q = c(TRUE, FALSE), O = 4))
+#' 
+#' #............
+#' # Logit boost        ( RWeka::WOW("LogitBoost") : gives info for the parameters of the RWeka control list )
+#' #............
 #'
 #'
-#' # res_log_boost = random_search_resample(as.factor(y1), tune_iters = 15,
+#' lb_lst = list(control = RWeka::Weka_control(H = c(1.0, 0.5), I = seq(10, 30, 5), Q = c(TRUE, FALSE), O = 4))
 #'
-#' #                                       resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
 #'
-#' #                                       ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
+#' res_log_boost = random_search_resample(as.factor(y1), tune_iters = 15,
 #'
-#' #                                       grid_params = lb_lst,
+#'                                       resampling_method = list(method = 'cross_validation', repeats = NULL, sample_rate = NULL, folds = 5),
 #'
-#' #                                       DATA = list(formula = form, data = ALL_DATA),
+#'                                       ALGORITHM = list(package = require(RWeka), algorithm = LogitBoost),
 #'
-#' #                                       Args = NULL,
+#'                                       grid_params = lb_lst,
 #'
-#' #                                       regression = FALSE, re_run_params = FALSE)
-
+#'                                       DATA = list(formula = form, data = ALL_DATA),
+#'
+#'                                       Args = NULL,
+#'
+#'                                       regression = FALSE, re_run_params = FALSE)
+#' }
 
 
 random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL, ALGORITHM = NULL, grid_params = NULL, DATA = NULL, Args = NULL, regression = FALSE, re_run_params = FALSE, UNLABELED_TEST_DATA = NULL, ...) {
@@ -94,14 +103,16 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
   if (any(c('h2o.x', 'h2o.y') %in% names(DATA))) {
 
     suppressMessages(ALGORITHM$package)
-    localH2O <- h2o.init(...)}
+    localH2O <- h2o::h2o.init(...)}
 
   else {
 
     if (!is.null(ALGORITHM$package)) suppressMessages(ALGORITHM$package)
   }
+  
+  XGB_BOOSTER_PREDICT = utils::getFromNamespace("predict.xgb.Booster", "xgboost")
 
-  if (re_run_params == TRUE) tune_iters = max(length_grid(grid_params))
+  if (re_run_params) tune_iters = max(length_grid(grid_params))
 
   if (is.null(resampling_method)) stop(simpleError('give list with resampling parameters'))
   if (is.null(resampling_method$repeats) && is.null(resampling_method$sample_rate) && is.null(resampling_method$folds)) stop(simpleError('choose a resampling method'))
@@ -120,19 +131,11 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
     TMP_lst_names = unlist(lapply(1:length(grid_params), function(x) if (is.list(grid_params[[x]])) names(grid_params[[x]]) else names(grid_params)[[x]]))
   }
 
-  # if (sum(names(as.list(args(ALGORITHM$algorithm))) %in% c("nhid", "actfun", "init_weights")) == 3) {
-  #
-  #   if (ncol(y) > 1) {
-  #
-  #     y = as.factor(max.col(y) + 1)
-  #   }
-  # }
-
   GRID_lst = Grid_params = GRID_TEST = list()
 
   cat('\n') ; cat('grid random search starts ..', '\n')
 
-  pb <- txtProgressBar(min = 1, max = tune_iters, style = 3) ; cat('\n')
+  pb <- utils::txtProgressBar(min = 1, max = tune_iters, style = 3) ; cat('\n')
 
   for (iter in 1:tune_iters) {
 
@@ -168,7 +171,7 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
     if ('watchlist' %in% names(DATA))  {
 
-      if (regression == TRUE) {
+      if (regression) {
 
         tmp_y = DATA[['watchlist']][['label']]}
 
@@ -204,7 +207,7 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
     # END of 1st exception for various algorithms
     #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-    if (re_run_params == FALSE) {
+    if (!re_run_params) {
 
       alg_fit = function_grid(grid_params)               # This function extracts a sample-set of parameters
 
@@ -314,7 +317,7 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
         else {
 
-          if (regression == TRUE) {
+          if (regression) {
 
             pred_tr = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression))
             pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))
@@ -382,7 +385,7 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
         tmp_fit = do.call(ALGORITHM$algorithm, tmp_args)
 
-        if (regression == TRUE) {
+        if (regression) {
 
           pred_tr = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression))
           pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))
@@ -424,7 +427,7 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
         tmp_fit = do.call(ALGORITHM$algorithm, tmp_args)
 
-        if (regression == TRUE) {
+        if (regression) {
 
           pred_tr = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_train, ], regression))
           pred_te = as.vector(EXCEPTIONS_preds(tmp_fit, tmp_X[idx_test, ], regression))
@@ -477,7 +480,7 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
           tmp_fit_TEST = do.call(ALGORITHM$algorithm, tmp_args)
         }
 
-        if (regression == TRUE) {
+        if (regression) {
 
           tmp_out = list(pred_tr = tmp_fit_tr$fitted.values, pred_te = tmp_fit_te$fitted.values, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])
 
@@ -533,16 +536,16 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
       if (any(c('h2o.x', 'h2o.y') %in% names(DATA))) {                    # see if you can reduce the time when subsetting an h2o.frame as it takes time especially during resampling where I have to do multiple splits
 
-        h2o.no_progress()                                                 # hide the progress bar when h2o runs
+        h2o::h2o.no_progress()                                            # hide the progress bar when h2o runs
 
         tmp_args = alg_fit
 
-        h2o_train = as.h2o(tmp_h2o_data[idx_train, ], destination_frame = 'h2o_train')
-        h2o_test = as.h2o(tmp_h2o_data[idx_test, ], destination_frame = 'h2o_test')
+        h2o_train = h2o::as.h2o(tmp_h2o_data[idx_train, ], destination_frame = 'h2o_train')
+        h2o_test = h2o::as.h2o(tmp_h2o_data[idx_test, ], destination_frame = 'h2o_test')
 
         if (!is.null(UNLABELED_TEST_DATA)) {
 
-          h2o_TEST = as.h2o(UNLABELED_TEST_DATA, destination_frame = 'h2o_TEST')
+          h2o_TEST = h2o::as.h2o(UNLABELED_TEST_DATA, destination_frame = 'h2o_TEST')
         }
 
         tmp_args[['training_frame']] = h2o_train
@@ -558,25 +561,25 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
         tmp_fit_h2o = do.call(ALGORITHM$algorithm, tmp_args)
 
-        if (regression == TRUE && as.vector(class(tmp_fit_h2o)) == "H2ORegressionModel") {
+        if (regression && as.vector(class(tmp_fit_h2o)) == "H2ORegressionModel") {
 
-          pred_tr = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_train))[, 1]
-          pred_te = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_test))[, 1]
+          pred_tr = as.data.frame(h2o::h2o.predict(object = tmp_fit_h2o, newdata = h2o_train))[, 1]
+          pred_te = as.data.frame(h2o::h2o.predict(object = tmp_fit_h2o, newdata = h2o_test))[, 1]
 
           if (!is.null(UNLABELED_TEST_DATA)) {
 
-            out_TEST_PREDS[[Repeat]] = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_TEST))[, 1]
+            out_TEST_PREDS[[Repeat]] = as.data.frame(h2o::h2o.predict(object = tmp_fit_h2o, newdata = h2o_TEST))[, 1]
           }
         }
 
-        else if (regression == FALSE && (as.vector(class(tmp_fit_h2o)) %in% c("H2OBinomialModel", "H2OMultinomialModel"))) {
+        else if (!regression && (as.vector(class(tmp_fit_h2o)) %in% c("H2OBinomialModel", "H2OMultinomialModel"))) {
 
-          pred_tr = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_train))[, -1]
-          pred_te = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_test))[, -1]
+          pred_tr = as.data.frame(h2o::h2o.predict(object = tmp_fit_h2o, newdata = h2o_train))[, -1]
+          pred_te = as.data.frame(h2o::h2o.predict(object = tmp_fit_h2o, newdata = h2o_test))[, -1]
 
           if (!is.null(UNLABELED_TEST_DATA)) {
 
-            out_TEST_PREDS[[Repeat]] = as.data.frame(h2o.predict(object = tmp_fit_h2o, newdata = h2o_TEST))[, -1]
+            out_TEST_PREDS[[Repeat]] = as.data.frame(h2o::h2o.predict(object = tmp_fit_h2o, newdata = h2o_TEST))[, -1]
           }
         }
 
@@ -592,15 +595,15 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
         tmp_args = alg_fit
 
-        if (is.matrix(tmp_X) || (class(tmp_X) == 'dgCMatrix')) tmp_args[['data']] = xgb.DMatrix(data = tmp_X[idx_train, ], label = tmp_y[idx_train], missing = NA) else tmp_args[['data']] = xgb.DMatrix(data = as.matrix(tmp_X[idx_train, ]), label = tmp_y[idx_train], missing = NA)
+        if (is.matrix(tmp_X) || (class(tmp_X) == 'dgCMatrix')) tmp_args[['data']] = xgboost::xgb.DMatrix(data = tmp_X[idx_train, ], label = tmp_y[idx_train], missing = NA) else tmp_args[['data']] = xgboost::xgb.DMatrix(data = as.matrix(tmp_X[idx_train, ]), label = tmp_y[idx_train], missing = NA)
 
-        if (is.matrix(tmp_X) || (class(tmp_X) == 'dgCMatrix')) tmp_args[['watchlist']] = list(train = xgb.DMatrix(data = tmp_X[idx_train, ], label = tmp_y[idx_train], missing = NA),
+        if (is.matrix(tmp_X) || (class(tmp_X) == 'dgCMatrix')) tmp_args[['watchlist']] = list(train = xgboost::xgb.DMatrix(data = tmp_X[idx_train, ], label = tmp_y[idx_train], missing = NA),
 
-            test = xgb.DMatrix(data = tmp_X[idx_test, ], label = tmp_y[idx_test], missing = NA)) else
+            test = xgboost::xgb.DMatrix(data = tmp_X[idx_test, ], label = tmp_y[idx_test], missing = NA)) else
 
-              tmp_args[['watchlist']] = list(train = xgb.DMatrix(data = as.matrix(tmp_X[idx_train, ]), label = tmp_y[idx_train], missing = NA),
+              tmp_args[['watchlist']] = list(train = xgboost::xgb.DMatrix(data = as.matrix(tmp_X[idx_train, ]), label = tmp_y[idx_train], missing = NA),
 
-                                             test = xgb.DMatrix(data = as.matrix(tmp_X[idx_test, ]), label = tmp_y[idx_test], missing = NA))
+                                             test = xgboost::xgb.DMatrix(data = as.matrix(tmp_X[idx_test, ]), label = tmp_y[idx_test], missing = NA))
 
             if (!is.null(Args)) {
 
@@ -609,26 +612,26 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
             tmp_fit = do.call(ALGORITHM$algorithm, tmp_args)
 
-            if (regression == TRUE) {
+            if (regression) {
 
-              pred_tr = xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$train, ntreelimit = tmp_fit$best_iteration)
-              pred_te = xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$test, ntreelimit = tmp_fit$best_iteration)
+              pred_tr = XGB_BOOSTER_PREDICT(tmp_fit, tmp_args$watchlist$train, ntreelimit = tmp_fit$best_iteration)
+              pred_te = XGB_BOOSTER_PREDICT(tmp_fit, tmp_args$watchlist$test, ntreelimit = tmp_fit$best_iteration)
 
               if (!is.null(UNLABELED_TEST_DATA)) {
 
-                out_TEST_PREDS[[Repeat]] = xgboost:::predict.xgb.Booster(tmp_fit, as.matrix(UNLABELED_TEST_DATA), ntreelimit = tmp_fit$best_iteration)
+                out_TEST_PREDS[[Repeat]] = XGB_BOOSTER_PREDICT(tmp_fit, as.matrix(UNLABELED_TEST_DATA), ntreelimit = tmp_fit$best_iteration)
               }
 
               out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = tmp_y[idx_train], y_te = tmp_y[idx_test])}
 
             else {
 
-              pred_tr = as.data.frame(matrix(xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$train, ntreelimit = tmp_fit$best_iteration), nrow = nrow(tmp_X[idx_train, ]), ncol = length(unique(getinfo(tmp_args$data, 'label'))), byrow = T))
-              pred_te = as.data.frame(matrix(xgboost:::predict.xgb.Booster(tmp_fit, tmp_args$watchlist$test, ntreelimit = tmp_fit$best_iteration), nrow = nrow(tmp_X[idx_test, ]), ncol = length(unique(getinfo(tmp_args$data, 'label'))), byrow = T))
+              pred_tr = as.data.frame(matrix(XGB_BOOSTER_PREDICT(tmp_fit, tmp_args$watchlist$train, ntreelimit = tmp_fit$best_iteration), nrow = nrow(tmp_X[idx_train, ]), ncol = length(unique(xgboost::getinfo(tmp_args$data, 'label'))), byrow = T))
+              pred_te = as.data.frame(matrix(XGB_BOOSTER_PREDICT(tmp_fit, tmp_args$watchlist$test, ntreelimit = tmp_fit$best_iteration), nrow = nrow(tmp_X[idx_test, ]), ncol = length(unique(xgboost::getinfo(tmp_args$data, 'label'))), byrow = T))
 
               if (!is.null(UNLABELED_TEST_DATA)) {
 
-                out_TEST_PREDS[[Repeat]] = as.data.frame(matrix(xgboost:::predict.xgb.Booster(tmp_fit, as.matrix(UNLABELED_TEST_DATA), ntreelimit = tmp_fit$best_iteration), nrow = nrow(UNLABELED_TEST_DATA), ncol = length(unique(getinfo(tmp_args$data, 'label'))), byrow = T))
+                out_TEST_PREDS[[Repeat]] = as.data.frame(matrix(XGB_BOOSTER_PREDICT(tmp_fit, as.matrix(UNLABELED_TEST_DATA), ntreelimit = tmp_fit$best_iteration), nrow = nrow(UNLABELED_TEST_DATA), ncol = length(unique(xgboost::getinfo(tmp_args$data, 'label'))), byrow = T))
               }
 
               out_f[[Repeat]] = list(pred_tr = pred_tr, pred_te = pred_te, y_tr = as.factor(tmp_y[idx_train] + 1), y_te = as.factor(tmp_y[idx_test] + 1))      # I subtracted 1 from tmp_y AND I add here 1 for the performance measures [ convert to factor in classification ]
@@ -643,7 +646,7 @@ random_search_resample = function(y, tune_iters = NULL, resampling_method = NULL
 
     GRID_TEST[[iter]] = out_TEST_PREDS
 
-    setTxtProgressBar(pb, iter)
+    utils::setTxtProgressBar(pb, iter)
   }
   close(pb) ; cat('\n')
 

@@ -6,7 +6,11 @@
 \usage{
 mse(y_true, y_pred)
 }
+\arguments{
+\item{y_true}{a numeric vector specifying the response variable}
+
+\item{y_pred}{a numeric vector specifying the predictions}
+}
 \description{
 evaluation metric for regression
 }
-\keyword{internal}

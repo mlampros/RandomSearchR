@@ -4,8 +4,14 @@
 \alias{resampling_methods}
 \title{Resampling methods used in the RandomSearch file}
 \usage{
-resampling_methods(y, method, iter = 1, REPEATS = 1, sample_rate = NULL,
-  FOLDS = NULL)
+resampling_methods(
+  y,
+  method,
+  iter = 1,
+  REPEATS = 1,
+  sample_rate = NULL,
+  FOLDS = NULL
+)
 }
 \description{
 Resampling methods used in the RandomSearch file

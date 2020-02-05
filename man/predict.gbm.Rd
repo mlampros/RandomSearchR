@@ -2,14 +2,14 @@
 % Please edit documentation in R/utils.R
 \name{predict.gbm}
 \alias{predict.gbm}
-\title{[  http://www.samuelbosch.com/2015/09/workaround-ntrees-is-missing-in-r.html,  with minor modifications ]
-work around for bug in gbm 2.1.1 -- PREDICTION-PROBABILITIES when predict(fit, data, type = 'response')}
+\title{work around for bug in gbm 2.1.1 with minor modifications -- PREDICTION-PROBABILITIES when predict(fit, data, type = 'response')}
 \usage{
-\method{predict}{gbm}(object, newdata, n.trees, type = "link",
-  single.tree = FALSE, ...)
+\method{predict}{gbm}(object, newdata, n.trees, type = "link", single.tree = FALSE, ...)
 }
 \description{
-[  http://www.samuelbosch.com/2015/09/workaround-ntrees-is-missing-in-r.html,  with minor modifications ]
-work around for bug in gbm 2.1.1 -- PREDICTION-PROBABILITIES when predict(fit, data, type = 'response')
+work around for bug in gbm 2.1.1 with minor modifications -- PREDICTION-PROBABILITIES when predict(fit, data, type = 'response')
+}
+\references{
+http://www.samuelbosch.com/2015/09/workaround-ntrees-is-missing-in-r.html
 }
 \keyword{internal}

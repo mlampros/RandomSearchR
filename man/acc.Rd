@@ -6,7 +6,11 @@
 \usage{
 acc(y_true, preds)
 }
+\arguments{
+\item{y_true}{a numeric vector specifying the response variable}
+
+\item{preds}{a numeric vector specifying the predictions}
+}
 \description{
 evaluation metric for binary and multiclass classification
 }
-\keyword{internal}

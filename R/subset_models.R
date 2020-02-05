@@ -1,3 +1,4 @@
+
 #' subset_mods
 #'
 #' subset the parameter output of a performance_measures object
@@ -6,14 +7,21 @@
 #' @param bst_mods the number of models to select (rows of each algorithm)
 #' @param train_params if the subset should be based on train or test output
 #' @return a list of lists
+#' 
 #' @details
 #' This function takes the result from the performance_measures function, the number of best performing grid-models and a boolean specifying if the train or test predictions should be taken into account
 #' when subseting the data.frames and it returns a list with the optimal parameters for each algorithm.
+#' 
 #' @export
+#' 
 #' @examples
 #'
-#' # bst_m = subset_mods(perf_meas_OBJ = perf, bst_mods = 5, train_params = FALSE)
-#' # bst_m
+#' \dontrun{
+#' 
+#' bst_m = subset_mods(perf_meas_OBJ = perf, bst_mods = 5, train_params = FALSE)
+#' 
+#' bst_m
+#' }
 
 
 subset_mods = function(perf_meas_OBJ, bst_mods = 5, train_params = FALSE) {
@@ -22,14 +30,13 @@ subset_mods = function(perf_meas_OBJ, bst_mods = 5, train_params = FALSE) {
 
   tmp_NAMS = names(perf_meas_OBJ$train_params)
 
-  if (train_params == TRUE) {
+  if (train_params) {
 
     tmp_colnams = lapply(perf_meas_OBJ$train_params, function(x) colnames(x)[-which(colnames(x) %in% c("Min.", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max."))])   # take the column names in form of a list
     OUT = lapply(1:length(perf_meas_OBJ$train_params), function(x) as.data.frame(perf_meas_OBJ$train_params[[x]][1:bst_mods, tmp_colnams[[x]]]))
   }
-
-  if (train_params == FALSE) {
-
+  else {
+    
     tmp_colnams = lapply(perf_meas_OBJ$test_params, function(x) colnames(x)[-which(colnames(x) %in% c("Min.", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max."))])
     OUT = lapply(1:length(perf_meas_OBJ$test_params), function(x) as.data.frame(perf_meas_OBJ$test_params[[x]][1:bst_mods, tmp_colnams[[x]]]))
   }

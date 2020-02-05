@@ -25,6 +25,10 @@ when subseting the data.frames and it returns a list with the optimal parameters
 }
 \examples{
 
-# bst_m = subset_mods(perf_meas_OBJ = perf, bst_mods = 5, train_params = FALSE)
-# bst_m
+\dontrun{
+
+bst_m = subset_mods(perf_meas_OBJ = perf, bst_mods = 5, train_params = FALSE)
+
+bst_m
+}
 }
