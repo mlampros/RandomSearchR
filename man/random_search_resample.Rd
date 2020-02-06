@@ -100,8 +100,12 @@ res_rf = random_search_resample(as.factor(y1), tune_iters = 15,
 
 
 #............
-# Logit boost  ( RWeka::WOW("LogitBoost") : gives info for the parameters of the RWeka control list )
+# Logit boost
 #............
+
+#...........................
+# RWeka::WOW("LogitBoost") : gives info for the parameters of the RWeka control list
+#...........................
 
 
 lb_lst = list(control = RWeka::Weka_control(H = c(1.0, 0.5), 
