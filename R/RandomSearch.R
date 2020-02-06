@@ -79,9 +79,13 @@
 #'
 #' 
 #' #............
-#' # Logit boost  ( RWeka::WOW("LogitBoost") : gives info for the parameters of the RWeka control list )
+#' # Logit boost
 #' #............
-#'
+#' 
+#' #...........................
+#' # RWeka::WOW("LogitBoost") : gives info for the parameters of the RWeka control list
+#' #...........................
+#' 
 #'
 #' lb_lst = list(control = RWeka::Weka_control(H = c(1.0, 0.5), 
 #'                                             I = seq(10, 30, 5), 
