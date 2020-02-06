@@ -2,7 +2,7 @@ Package: RandomSearchR
 Type: Package
 Title: Random Search in R
 Version: 1.0.0
-Date: 2020-02-05
+Date: 2020-02-06
 Author: Lampros Mouselimis
 Maintainer: Lampros Mouselimis <mouselimislampros@gmail.com>
 BugReports: https://github.com/mlampros/RandomSearchR/issues
@@ -28,6 +28,6 @@ Suggests:
     covr,
     ranger
 Remotes: mlampros/FeatureSelection
-SystemRequirements: update: apt-get -y update (deb)
+SystemRequirements: rjava: apt-get install -y r-cran-rjava (deb)
 LazyData: TRUE
 RoxygenNote: 7.0.2
